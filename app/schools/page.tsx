@@ -3,9 +3,8 @@ import { ExternalLink, Search } from "lucide-react";
 
 import { FilterSelect } from "@/components/data/filter-select";
 import { DataDisclaimer } from "@/components/common/DataDisclaimer";
-import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
+import { WorkspaceOrPublicShell } from "@/components/workspace/WorkspaceOrPublicShell";
 import { getSchools } from "@/lib/schools/queries";
 
 export const dynamic = "force-dynamic";
@@ -34,8 +33,7 @@ export default async function SchoolsPage({ searchParams }: SchoolsPageProps) {
   ).sort() as string[];
 
   return (
-    <main className="min-h-screen">
-      <SiteHeader />
+    <WorkspaceOrPublicShell>
       <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <div className="border-b pb-8">
           <p className="text-sm font-semibold text-primary">学校库</p>
@@ -130,8 +128,7 @@ export default async function SchoolsPage({ searchParams }: SchoolsPageProps) {
           </div>
         )}
       </section>
-      <SiteFooter />
-    </main>
+    </WorkspaceOrPublicShell>
   );
 }
 

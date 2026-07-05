@@ -4,9 +4,8 @@ import { ExternalLink } from "lucide-react";
 
 import { AddToApplicationButton } from "@/components/applications/AddToApplicationButton";
 import { DataDisclaimer } from "@/components/common/DataDisclaimer";
-import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
+import { WorkspaceOrPublicShell } from "@/components/workspace/WorkspaceOrPublicShell";
 import { getProgramBySlug } from "@/lib/programs/queries";
 import { createClient } from "@/lib/supabase/server";
 
@@ -39,8 +38,7 @@ export default async function ProgramDetailPage({
   const program = programResult.data;
 
   return (
-    <main className="min-h-screen">
-      <SiteHeader />
+    <WorkspaceOrPublicShell>
       <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <Button asChild variant="ghost">
           <Link href="/programs">返回项目库</Link>
@@ -130,22 +128,19 @@ export default async function ProgramDetailPage({
           </section>
         </div>
       </section>
-      <SiteFooter />
-    </main>
+    </WorkspaceOrPublicShell>
   );
 }
 
 function DetailError({ message }: { message: string }) {
   return (
-    <main className="min-h-screen">
-      <SiteHeader />
+    <WorkspaceOrPublicShell>
       <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-5 text-sm text-destructive">
           {message}
         </div>
       </section>
-      <SiteFooter />
-    </main>
+    </WorkspaceOrPublicShell>
   );
 }
 

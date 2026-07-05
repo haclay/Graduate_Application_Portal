@@ -5,13 +5,8 @@ import {
   CalendarClock,
   CheckCircle2,
   ClipboardList,
-  FileText,
-  GraduationCap,
-  ListChecks,
-  Sparkles,
+  ListChecks,
 } from "lucide-react";
-
-import { ApplicationStatusBadge } from "@/components/applications/ApplicationStatusBadge";
 
 import { AppShell } from "@/components/workspace/AppShell";
 import { Button } from "@/components/ui/button";
@@ -27,45 +22,6 @@ import type { StudentProfile } from "@/lib/profile/types";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
-
-const dashboardSections = [
-  {
-    title: "学生背景档案",
-    description: "填写本科背景、成绩、经历和申请目标。",
-    href: "/profile",
-    icon: GraduationCap,
-  },
-  {
-    title: "选校推荐",
-    description: "根据背景档案输出彩票、冲刺、匹配、稳妥分层。",
-    href: "/matching",
-    icon: Sparkles,
-  },
-  {
-    title: "申请工作台",
-    description: "管理目标项目、DDL、任务和申请状态。",
-    href: "/applications",
-    icon: ClipboardList,
-  },
-  {
-    title: "任务管理",
-    description: "查看近期申请任务和完成进度。",
-    href: "/tasks",
-    icon: ListChecks,
-  },
-  {
-    title: "DDL 列表",
-    description: "按截止日期查看申请清单里的项目 DDL。",
-    href: "/calendar",
-    icon: CalendarClock,
-  },
-  {
-    title: "文书材料",
-    description: "后续管理简历、文书和推荐信材料。",
-    href: "/dashboard",
-    icon: FileText,
-  },
-];
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -119,10 +75,10 @@ export default async function DashboardPage() {
     label,
     status,
   }));
-  const displayName = profile?.nickname ?? profile?.full_name ?? user.email?.split("@")[0] ?? "同学";
+  const displayName = profile?.full_name ?? profile?.nickname ?? user.email?.split("@")[0] ?? "\u540c\u5b66";
 
   return (
-    <AppShell userEmail={user.email} userName={profile?.nickname ?? profile?.full_name}>
+    <AppShell userEmail={user.email} userName={profile?.full_name ?? profile?.nickname}>
       <section className="py-4">
         <div className="flex flex-col justify-between gap-4 border-b pb-8 lg:flex-row lg:items-end">
           <div>
@@ -276,24 +232,6 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {dashboardSections.map((section) => {
-            const Icon = section.icon;
-
-            return (
-              <article className="rounded-lg border bg-card p-5" key={section.title}>
-                <Icon className="mb-4 h-5 w-5 text-primary" aria-hidden="true" />
-                <h2 className="text-lg font-semibold">{section.title}</h2>
-                <p className="mt-2 min-h-12 text-sm leading-6 text-muted-foreground">
-                  {section.description}
-                </p>
-                <Button asChild className="mt-5" variant="outline">
-                  <Link href={section.href}>进入</Link>
-                </Button>
-              </article>
-            );
-          })}
-        </div>
       </section>
     </AppShell>
   );

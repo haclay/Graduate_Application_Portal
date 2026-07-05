@@ -30,7 +30,7 @@ export default async function ProfilePage() {
   const completion = calculateProfileCompletion(profile);
 
   return (
-    <AppShell userEmail={user.email}>
+    <AppShell userEmail={user.email} userName={profile?.full_name ?? profile?.nickname}>
       <section className="py-4">
         <div className="flex flex-col justify-between gap-4 border-b pb-8 sm:flex-row sm:items-end">
           <div>

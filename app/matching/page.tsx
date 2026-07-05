@@ -28,7 +28,7 @@ export default async function MatchingPage() {
     .maybeSingle<StudentProfile>();
 
   return (
-    <AppShell userEmail={user.email}>
+    <AppShell userEmail={user.email} userName={profile?.full_name ?? profile?.nickname}>
       <section className="py-4">
         <div className="border-b pb-8">
           <p className="text-sm font-semibold text-primary">选校推荐</p>

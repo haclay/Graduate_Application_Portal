@@ -3,9 +3,8 @@ import { notFound } from "next/navigation";
 import { ExternalLink } from "lucide-react";
 
 import { DataDisclaimer } from "@/components/common/DataDisclaimer";
-import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
+import { WorkspaceOrPublicShell } from "@/components/workspace/WorkspaceOrPublicShell";
 import { getProgramsBySchoolId, getSchoolBySlug } from "@/lib/schools/queries";
 
 export const dynamic = "force-dynamic";
@@ -32,8 +31,7 @@ export default async function SchoolDetailPage({
   const programsResult = await getProgramsBySchoolId(school.id);
 
   return (
-    <main className="min-h-screen">
-      <SiteHeader />
+    <WorkspaceOrPublicShell>
       <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <Button asChild variant="ghost">
           <Link href="/schools">返回学校库</Link>
@@ -137,22 +135,19 @@ export default async function SchoolDetailPage({
           )}
         </section>
       </section>
-      <SiteFooter />
-    </main>
+    </WorkspaceOrPublicShell>
   );
 }
 
 function DetailError({ message }: { message: string }) {
   return (
-    <main className="min-h-screen">
-      <SiteHeader />
+    <WorkspaceOrPublicShell>
       <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-5 text-sm text-destructive">
           {message}
         </div>
       </section>
-      <SiteFooter />
-    </main>
+    </WorkspaceOrPublicShell>
   );
 }
 

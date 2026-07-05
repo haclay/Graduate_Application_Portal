@@ -80,7 +80,7 @@ export default async function MatchingResultsPage() {
   });
 
   return (
-    <AppShell userEmail={user.email}>
+    <AppShell userEmail={user.email} userName={profile.full_name ?? profile.nickname}>
       <section className="py-4">
         <Button asChild variant="ghost">
           <Link href="/matching">返回选校推荐</Link>
