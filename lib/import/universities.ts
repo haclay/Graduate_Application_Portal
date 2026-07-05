@@ -1,4 +1,4 @@
-﻿export const UNIVERSITY_IMPORT_COUNTRIES = [
+export const UNIVERSITY_IMPORT_COUNTRIES = [
   "United States",
   "United Kingdom",
   "Canada",
@@ -21,7 +21,7 @@
 ] as const;
 
 export const UNIVERSITY_IMPORT_SOURCE = "hipo_university_domains";
-export const UNIVERSITY_IMPORT_BASE_URL = "https://universities.hipolabs.com/search";
+export const UNIVERSITY_IMPORT_BASE_URL = "http://universities.hipolabs.com/search";
 
 export type UniversityImportCountry = (typeof UNIVERSITY_IMPORT_COUNTRIES)[number];
 

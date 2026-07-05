@@ -1,4 +1,4 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 import {
   createSchoolSlug,
@@ -100,6 +100,23 @@ function getSchemaHelpMessage(message: string) {
   return `${message}。请先在 Supabase SQL Editor 运行 supabase/migrations/005_add_data_expansion_metadata.sql。`;
 }
 
+function getErrorCauseMessage(error: Error) {
+  const cause = error.cause;
+
+  if (!cause || typeof cause !== "object") {
+    return null;
+  }
+
+  const code = "code" in cause && typeof cause.code === "string" ? cause.code : null;
+  const message = "message" in cause && typeof cause.message === "string" ? cause.message : null;
+
+  if (code && message) {
+    return `${code}: ${message}`;
+  }
+
+  return code ?? message;
+}
+
 function getResponseErrorMessage(error: unknown) {
   if (!(error instanceof Error)) {
     return "Unknown import error.";
@@ -109,7 +126,10 @@ function getResponseErrorMessage(error: unknown) {
     return "缺少 SUPABASE_SERVICE_ROLE_KEY，请在 .env.local 中配置服务端 key。";
   }
 
-  return getSchemaHelpMessage(error.message);
+  const causeMessage = getErrorCauseMessage(error);
+  const message = causeMessage ? `${error.message}: ${causeMessage}` : error.message;
+
+  return getSchemaHelpMessage(message);
 }
 
 async function recordImportJob({
