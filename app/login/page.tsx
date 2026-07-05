@@ -2,6 +2,7 @@ import Link from "next/link";
 import { LogIn } from "lucide-react";
 
 import { LoginForm } from "@/components/auth/login-form";
+import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 
@@ -30,6 +31,7 @@ export default function LoginPage() {
           </div>
         </div>
       </section>
+      <SiteFooter />
     </main>
   );
 }

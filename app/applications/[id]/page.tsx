@@ -6,7 +6,7 @@ import { ApplicationDetailControls } from "@/components/applications/Application
 import { ApplicationProgress } from "@/components/applications/ApplicationProgress";
 import { ApplicationStatusBadge } from "@/components/applications/ApplicationStatusBadge";
 import { DeadlineList } from "@/components/calendar/DeadlineList";
-import { SiteHeader } from "@/components/site-header";
+import { AppShell } from "@/components/workspace/AppShell";
 import { CustomTaskForm } from "@/components/tasks/CustomTaskForm";
 import { TaskItem } from "@/components/tasks/TaskItem";
 import { Button } from "@/components/ui/button";
@@ -36,7 +36,7 @@ export default async function ApplicationDetailPage({
   const applicationResult = await getApplicationById(id, user.id);
 
   if (applicationResult.error) {
-    return <ErrorPage message={applicationResult.error} />;
+    return <ErrorPage message={applicationResult.error} userEmail={user.email} />;
   }
 
   if (!applicationResult.data) {
@@ -54,9 +54,8 @@ export default async function ApplicationDetailPage({
   );
 
   return (
-    <main className="min-h-screen">
-      <SiteHeader />
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+    <AppShell userEmail={user.email}>
+      <section className="py-4">
         <Button asChild variant="ghost">
           <Link href="/applications">返回申请清单</Link>
         </Button>
@@ -153,20 +152,19 @@ export default async function ApplicationDetailPage({
           </section>
         </div>
       </section>
-    </main>
+    </AppShell>
   );
 }
 
-function ErrorPage({ message }: { message: string }) {
+function ErrorPage({ message, userEmail }: { message: string; userEmail: string | null | undefined }) {
   return (
-    <main className="min-h-screen">
-      <SiteHeader />
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+    <AppShell userEmail={userEmail}>
+      <section className="py-4">
         <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-5 text-sm text-destructive">
           {message}
         </div>
       </section>
-    </main>
+    </AppShell>
   );
 }
 

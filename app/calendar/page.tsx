@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import { DeadlineList } from "@/components/calendar/DeadlineList";
 import { DataDisclaimer } from "@/components/common/DataDisclaimer";
-import { SiteHeader } from "@/components/site-header";
+import { AppShell } from "@/components/workspace/AppShell";
 import { Button } from "@/components/ui/button";
 import { getUserApplicationDeadlines } from "@/lib/applications/queries";
 import { createClient } from "@/lib/supabase/server";
@@ -23,9 +23,8 @@ export default async function CalendarPage() {
   const deadlinesResult = await getUserApplicationDeadlines(user.id);
 
   return (
-    <main className="min-h-screen">
-      <SiteHeader />
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+    <AppShell userEmail={user.email}>
+      <section className="py-4">
         <div className="flex flex-col justify-between gap-4 border-b pb-8 lg:flex-row lg:items-end">
           <div>
             <p className="text-sm font-semibold text-primary">DDL</p>
@@ -57,6 +56,6 @@ export default async function CalendarPage() {
           )}
         </div>
       </section>
-    </main>
+    </AppShell>
   );
 }

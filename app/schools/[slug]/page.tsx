@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ExternalLink } from "lucide-react";
 
 import { DataDisclaimer } from "@/components/common/DataDisclaimer";
+import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { getProgramsBySchoolId, getSchoolBySlug } from "@/lib/schools/queries";
@@ -136,6 +137,7 @@ export default async function SchoolDetailPage({
           )}
         </section>
       </section>
+      <SiteFooter />
     </main>
   );
 }
@@ -149,6 +151,7 @@ function DetailError({ message }: { message: string }) {
           {message}
         </div>
       </section>
+      <SiteFooter />
     </main>
   );
 }

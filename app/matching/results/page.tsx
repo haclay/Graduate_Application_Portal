@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { DataDisclaimer } from "@/components/common/DataDisclaimer";
 import { MatchingTierGuide } from "@/components/matching/MatchingTierGuide";
 import { RecommendationGroup } from "@/components/matching/RecommendationGroup";
-import { SiteHeader } from "@/components/site-header";
+import { AppShell } from "@/components/workspace/AppShell";
 import { Button } from "@/components/ui/button";
 import { generateRecommendations } from "@/lib/matching/rules";
 import { tierOrder } from "@/lib/matching/types";
@@ -33,7 +33,7 @@ export default async function MatchingResultsPage() {
     .maybeSingle<StudentProfile>();
 
   if (profileError) {
-    return <ErrorPage message={profileError.message} />;
+    return <ErrorPage message={profileError.message} userEmail={user.email} />;
   }
 
   if (!profile) {
@@ -65,7 +65,7 @@ export default async function MatchingResultsPage() {
     null;
 
   if (dataError) {
-    return <ErrorPage message={dataError} />;
+    return <ErrorPage message={dataError} userEmail={user.email} />;
   }
 
   const schools = schoolsResponse.data ?? [];
@@ -80,9 +80,8 @@ export default async function MatchingResultsPage() {
   });
 
   return (
-    <main className="min-h-screen">
-      <SiteHeader />
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+    <AppShell userEmail={user.email}>
+      <section className="py-4">
         <Button asChild variant="ghost">
           <Link href="/matching">返回选校推荐</Link>
         </Button>
@@ -129,20 +128,19 @@ export default async function MatchingResultsPage() {
           </div>
         )}
       </section>
-    </main>
+    </AppShell>
   );
 }
 
-function ErrorPage({ message }: { message: string }) {
+function ErrorPage({ message, userEmail }: { message: string; userEmail: string | null | undefined }) {
   return (
-    <main className="min-h-screen">
-      <SiteHeader />
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+    <AppShell userEmail={userEmail}>
+      <section className="py-4">
         <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-5 text-sm text-destructive">
           {message}
         </div>
       </section>
-    </main>
+    </AppShell>
   );
 }
 

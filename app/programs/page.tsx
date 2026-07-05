@@ -3,6 +3,7 @@ import { Search } from "lucide-react";
 
 import { FilterSelect } from "@/components/data/filter-select";
 import { DataDisclaimer } from "@/components/common/DataDisclaimer";
+import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { getProgramFilterOptions, getPrograms } from "@/lib/programs/queries";
@@ -118,6 +119,7 @@ export default async function ProgramsPage({ searchParams }: ProgramsPageProps) 
           </div>
         )}
       </section>
+      <SiteFooter />
     </main>
   );
 }

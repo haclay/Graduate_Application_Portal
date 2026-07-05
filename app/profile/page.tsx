@@ -3,7 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { BookOpenCheck, FileText, GraduationCap, Target } from "lucide-react";
 
-import { SiteHeader } from "@/components/site-header";
+import { AppShell } from "@/components/workspace/AppShell";
 import { Button } from "@/components/ui/button";
 import { calculateProfileCompletion } from "@/lib/profile/completion";
 import type { StudentProfile } from "@/lib/profile/types";
@@ -30,9 +30,8 @@ export default async function ProfilePage() {
   const completion = calculateProfileCompletion(profile);
 
   return (
-    <main className="min-h-screen">
-      <SiteHeader />
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+    <AppShell userEmail={user.email}>
+      <section className="py-4">
         <div className="flex flex-col justify-between gap-4 border-b pb-8 sm:flex-row sm:items-end">
           <div>
             <p className="text-sm font-semibold text-primary">学生背景档案</p>
@@ -126,7 +125,7 @@ export default async function ProfilePage() {
           </div>
         )}
       </section>
-    </main>
+    </AppShell>
   );
 }
 

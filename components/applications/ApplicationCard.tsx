@@ -74,7 +74,7 @@ export function ApplicationCard({
         <Button asChild>
           <Link href={`/applications/${application.id}`}>查看详情</Link>
         </Button>
-        <Button disabled={isDeleting} onClick={handleDelete} type="button" variant="outline">
+        <Button disabled={isDeleting} onClick={handleDelete} type="button" variant="destructive">
           {isDeleting ? "删除中..." : "删除"}
         </Button>
       </div>

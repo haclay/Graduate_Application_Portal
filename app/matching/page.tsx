@@ -4,7 +4,7 @@ import { Sparkles } from "lucide-react";
 
 import { MatchingTierGuide } from "@/components/matching/MatchingTierGuide";
 import { ProfileSummary } from "@/components/matching/ProfileSummary";
-import { SiteHeader } from "@/components/site-header";
+import { AppShell } from "@/components/workspace/AppShell";
 import { Button } from "@/components/ui/button";
 import type { StudentProfile } from "@/lib/profile/types";
 import { createClient } from "@/lib/supabase/server";
@@ -28,9 +28,8 @@ export default async function MatchingPage() {
     .maybeSingle<StudentProfile>();
 
   return (
-    <main className="min-h-screen">
-      <SiteHeader />
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+    <AppShell userEmail={user.email}>
+      <section className="py-4">
         <div className="border-b pb-8">
           <p className="text-sm font-semibold text-primary">选校推荐</p>
           <h1 className="mt-2 text-3xl font-semibold">规则版选校推荐</h1>
@@ -73,6 +72,6 @@ export default async function MatchingPage() {
           </div>
         )}
       </section>
-    </main>
+    </AppShell>
   );
 }

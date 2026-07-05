@@ -1,17 +1,16 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import {
   ArrowRight,
   BookOpenCheck,
   CalendarClock,
-  CheckCircle2,
   ClipboardList,
   FileText,
   Layers3,
   ListChecks,
-  MapPinned,
   Sparkles,
 } from "lucide-react";
 
+import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 
@@ -65,65 +64,38 @@ export default function HomePage() {
   return (
     <main className="min-h-screen">
       <SiteHeader />
-      <section className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:py-20">
-        <div className="flex flex-col justify-center">
-          <p className="mb-4 text-sm font-semibold text-primary">研究生申请工作台</p>
-          <h1 className="max-w-3xl text-4xl font-semibold leading-tight tracking-normal text-foreground sm:text-5xl">
-            研究生申请，不再靠零散表格和浏览器标签页。
-          </h1>
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
-            MyGrad 帮你整理学校项目、选校分层、DDL、申请任务和材料进度，让每一步更清楚。
-          </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <Button asChild size="lg">
-              <Link href="/profile/edit">
-                开始填写背景
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <Link href="/programs">查看学校项目库</Link>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <Link href="/applications">进入申请工作台</Link>
-            </Button>
-          </div>
-        </div>
-
-        <div className="relative min-h-[380px] overflow-hidden rounded-lg border bg-card p-5 shadow-sm">
-          <div className="absolute inset-x-0 top-0 h-2 bg-[linear-gradient(90deg,var(--primary),var(--secondary),var(--accent))]" />
-          <div className="mt-4 flex items-center justify-between border-b pb-4">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">申请工作台概览</p>
-              <p className="mt-1 text-2xl font-semibold">2027 Fall</p>
+      <section
+        className="relative overflow-hidden bg-cover bg-center"
+        style={{ backgroundImage: "url('/images/hero-campus-application.jpg')" }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/45" />
+        <div className="absolute inset-0 bg-background/20" />
+        <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:py-24">
+          <div className="max-w-3xl">
+            <p className="mb-4 text-sm font-semibold text-primary">研究生申请工作台</p>
+            <h1 className="text-4xl font-semibold leading-tight tracking-normal text-foreground sm:text-5xl lg:text-6xl">
+              像学长学姐一样陪伴，像专业顾问一样规划
+            </h1>
+            <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">
+              MyGrad 陪你规划好从选校到入学的每一步，让研究生申请不再一个人摸索
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <Button asChild size="lg">
+                <Link href="/profile/edit">
+                  开始填写背景
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+              </Button>
+              <Button asChild className="bg-background/85 backdrop-blur hover:bg-background" size="lg" variant="outline">
+                <Link href="/programs">查看学校项目库</Link>
+              </Button>
+              <Button asChild className="bg-background/85 backdrop-blur hover:bg-background" size="lg" variant="outline">
+                <Link href="/applications">进入申请工作台</Link>
+              </Button>
             </div>
-            <MapPinned className="h-8 w-8 text-primary" aria-hidden="true" />
-          </div>
-          <div className="mt-6 grid gap-4">
-            {[
-              ["背景完成度", "GPA、语言、经历、目标方向"],
-              ["选校分层", "彩票 / 冲刺 / 匹配 / 稳妥"],
-              ["申请清单", "状态、备注、任务进度"],
-              ["近期提醒", "DDL 和下一步待办"],
-            ].map(([title, description], index) => (
-              <div
-                className="grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-md border bg-background p-4"
-                key={title}
-              >
-                <span className="flex h-8 w-8 items-center justify-center rounded-md bg-secondary text-sm font-semibold text-secondary-foreground">
-                  {index + 1}
-                </span>
-                <div>
-                  <p className="font-medium">{title}</p>
-                  <p className="text-sm text-muted-foreground">{description}</p>
-                </div>
-                <CheckCircle2 className="h-4 w-4 text-primary" aria-hidden />
-              </div>
-            ))}
           </div>
         </div>
       </section>
-
       <section className="border-t bg-muted/40">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
           <div className="max-w-2xl">
@@ -195,6 +167,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      <SiteFooter />
     </main>
   );
 }

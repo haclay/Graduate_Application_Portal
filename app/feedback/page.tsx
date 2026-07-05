@@ -1,4 +1,5 @@
-﻿import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 
 export default function FeedbackPage() {
@@ -66,6 +67,7 @@ export default function FeedbackPage() {
           <Button disabled type="button">提交反馈，即将开放</Button>
         </form>
       </section>
+      <SiteFooter />
     </main>
   );
 }

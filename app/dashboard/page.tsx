@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { ComponentType } from "react";
 import {
@@ -12,8 +12,8 @@ import {
 } from "lucide-react";
 
 import { ApplicationStatusBadge } from "@/components/applications/ApplicationStatusBadge";
-import { LogoutButton } from "@/components/auth/logout-button";
-import { SiteHeader } from "@/components/site-header";
+
+import { AppShell } from "@/components/workspace/AppShell";
 import { Button } from "@/components/ui/button";
 import {
   getUserApplicationDeadlines,
@@ -114,28 +114,45 @@ export default async function DashboardPage() {
     label,
     status,
   }));
+  const displayName = profile?.nickname ?? profile?.full_name ?? user.email?.split("@")[0] ?? "同学";
 
   return (
-    <main className="min-h-screen">
-      <SiteHeader />
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+    <AppShell userEmail={user.email} userName={profile?.nickname ?? profile?.full_name}>
+      <section className="py-4">
         <div className="flex flex-col justify-between gap-4 border-b pb-8 lg:flex-row lg:items-end">
           <div>
-            <p className="text-sm font-semibold text-primary">申请总览</p>
-            <h1 className="mt-2 text-3xl font-semibold">研究生申请工作台</h1>
+            <p className="text-sm font-semibold text-primary">工作台首页</p>
+            <h1 className="mt-2 text-3xl font-semibold">你好，{displayName}</h1>
             <p className="mt-3 max-w-2xl text-muted-foreground">
-              当前登录账号：{user.email ?? "未知邮箱"}
+              这里是你的研究生申请工作台。你可以从这里查看背景完成度、目标项目、近期待办任务和关键 DDL。
             </p>
           </div>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Button asChild>
-              <Link href="/profile/edit">
-                {profile ? "编辑背景档案" : "填写背景档案"}
-              </Link>
-            </Button>
-            <LogoutButton />
-          </div>
+          <Button asChild>
+            <Link href="/profile/edit">
+              {profile ? "编辑背景档案" : "填写背景档案"}
+            </Link>
+          </Button>
         </div>
+
+        <section className="mt-8 rounded-lg border bg-card p-5">
+          <div className="flex flex-col justify-between gap-3 border-b pb-4 sm:flex-row sm:items-end">
+            <div>
+              <p className="text-sm font-semibold text-primary">当前背景摘要</p>
+              <h2 className="mt-1 text-xl font-semibold">申请画像</h2>
+            </div>
+            <Button asChild variant="outline">
+              <Link href="/profile">查看完整档案</Link>
+            </Button>
+          </div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <ProfileSummaryItem label="本科学校" value={profile?.undergraduate_school} />
+            <ProfileSummaryItem label="本科专业" value={profile?.undergraduate_major} />
+            <ProfileSummaryItem label="GPA" value={profile?.gpa && profile?.gpa_scale ? `${profile.gpa} / ${profile.gpa_scale}` : null} />
+            <ProfileSummaryItem label="目标国家" value={formatArray(profile?.target_countries)} />
+            <ProfileSummaryItem label="目标专业" value={formatArray(profile?.target_majors)} />
+            <ProfileSummaryItem label="计划入学年份" value={profile?.planned_entry_year ? String(profile.planned_entry_year) : null} />
+          </div>
+        </section>
 
         <div className="mt-8 rounded-lg border bg-card p-5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -273,10 +290,28 @@ export default async function DashboardPage() {
           })}
         </div>
       </section>
-    </main>
+    </AppShell>
   );
 }
 
+function ProfileSummaryItem({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | number | null | undefined;
+}) {
+  return (
+    <div className="rounded-md border bg-background p-4">
+      <p className="text-xs font-medium text-muted-foreground">{label}</p>
+      <p className="mt-2 text-sm font-semibold">{value ?? "待完善"}</p>
+    </div>
+  );
+}
+
+function formatArray(value: string[] | null | undefined) {
+  return value && value.length > 0 ? value.join("、") : null;
+}
 function NextStepCard({
   applicationsCount,
   completionPercentage,

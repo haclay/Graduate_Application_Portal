@@ -3,6 +3,7 @@ import { ExternalLink, Search } from "lucide-react";
 
 import { FilterSelect } from "@/components/data/filter-select";
 import { DataDisclaimer } from "@/components/common/DataDisclaimer";
+import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { getSchools } from "@/lib/schools/queries";
@@ -129,6 +130,7 @@ export default async function SchoolsPage({ searchParams }: SchoolsPageProps) {
           </div>
         )}
       </section>
+      <SiteFooter />
     </main>
   );
 }

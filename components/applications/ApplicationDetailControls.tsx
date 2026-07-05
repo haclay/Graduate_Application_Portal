@@ -104,7 +104,7 @@ export function ApplicationDetailControls({
         <Button disabled={isPending} onClick={handleNotesSave} type="button" variant="outline">
           保存备注
         </Button>
-        <Button disabled={isPending} onClick={handleDelete} type="button" variant="outline">
+        <Button disabled={isPending} onClick={handleDelete} type="button" variant="destructive">
           删除整个申请项目
         </Button>
         {message ? <p className="text-sm text-muted-foreground">{message}</p> : null}

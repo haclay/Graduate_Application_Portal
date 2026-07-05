@@ -1,21 +1,22 @@
-import type { ApplicationStatus } from "@/lib/applications/types";
+﻿import type { ApplicationStatus } from "@/lib/applications/types";
 import { applicationStatusLabels } from "@/lib/applications/types";
+import { cn } from "@/lib/utils";
 
 const statusStyles: Record<ApplicationStatus, string> = {
-  accepted: "bg-secondary text-secondary-foreground",
-  documents_ready: "bg-accent text-accent-foreground",
-  interview: "bg-accent text-accent-foreground",
-  not_started: "bg-muted text-muted-foreground",
-  preparing: "bg-secondary text-secondary-foreground",
-  rejected: "bg-destructive/10 text-destructive",
-  submitted: "bg-primary text-primary-foreground",
-  waitlisted: "bg-accent text-accent-foreground",
-  withdrawn: "bg-muted text-muted-foreground",
+  accepted: "bg-emerald-100 text-emerald-900 border-emerald-200",
+  documents_ready: "bg-amber-100 text-amber-950 border-amber-200",
+  interview: "bg-amber-100 text-amber-950 border-amber-200",
+  not_started: "bg-muted text-foreground border-border",
+  preparing: "bg-secondary text-secondary-foreground border-secondary",
+  rejected: "bg-red-100 text-red-900 border-red-200",
+  submitted: "bg-primary text-primary-foreground border-primary",
+  waitlisted: "bg-amber-100 text-amber-950 border-amber-200",
+  withdrawn: "bg-muted text-foreground border-border",
 };
 
 export function ApplicationStatusBadge({ status }: { status: ApplicationStatus }) {
   return (
-    <span className={`rounded-md px-3 py-1 text-sm font-medium ${statusStyles[status]}`}>
+    <span className={cn("rounded-md border px-3 py-1 text-sm font-semibold", statusStyles[status])}>
       {applicationStatusLabels[status]}
     </span>
   );

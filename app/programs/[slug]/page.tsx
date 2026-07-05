@@ -4,6 +4,7 @@ import { ExternalLink } from "lucide-react";
 
 import { AddToApplicationButton } from "@/components/applications/AddToApplicationButton";
 import { DataDisclaimer } from "@/components/common/DataDisclaimer";
+import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { getProgramBySlug } from "@/lib/programs/queries";
@@ -129,6 +130,7 @@ export default async function ProgramDetailPage({
           </section>
         </div>
       </section>
+      <SiteFooter />
     </main>
   );
 }
@@ -142,6 +144,7 @@ function DetailError({ message }: { message: string }) {
           {message}
         </div>
       </section>
+      <SiteFooter />
     </main>
   );
 }

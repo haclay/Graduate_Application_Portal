@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { ProfileForm } from "@/components/profile/profile-form";
-import { SiteHeader } from "@/components/site-header";
+import { AppShell } from "@/components/workspace/AppShell";
 import type { StudentProfile } from "@/lib/profile/types";
 import { createClient } from "@/lib/supabase/server";
 
@@ -24,9 +24,8 @@ export default async function ProfileEditPage() {
     .maybeSingle<StudentProfile>();
 
   return (
-    <main className="min-h-screen">
-      <SiteHeader />
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+    <AppShell userEmail={user.email}>
+      <section className="py-4">
         <div className="border-b pb-8">
           <p className="text-sm font-semibold text-primary">学生背景档案</p>
           <h1 className="mt-2 text-3xl font-semibold">
@@ -40,6 +39,6 @@ export default async function ProfileEditPage() {
           <ProfileForm profile={profile} userId={user.id} />
         </div>
       </section>
-    </main>
+    </AppShell>
   );
 }

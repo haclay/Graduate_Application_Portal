@@ -2,6 +2,7 @@ import Link from "next/link";
 import { UserPlus } from "lucide-react";
 
 import { RegisterForm } from "@/components/auth/register-form";
+import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 
@@ -30,6 +31,7 @@ export default function RegisterPage() {
           </div>
         </div>
       </section>
+      <SiteFooter />
     </main>
   );
 }

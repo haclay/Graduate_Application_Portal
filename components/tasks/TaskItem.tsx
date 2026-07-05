@@ -84,7 +84,7 @@ export function TaskItem({
           onClick={handleDelete}
           size="sm"
           type="button"
-          variant="outline"
+          variant="destructive"
         >
           删除任务
         </Button>

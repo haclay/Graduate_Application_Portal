@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { SiteHeader } from "@/components/site-header";
+import { AppShell } from "@/components/workspace/AppShell";
 import { TaskList } from "@/components/tasks/TaskList";
 import { Button } from "@/components/ui/button";
 import { getUserTasks } from "@/lib/applications/queries";
@@ -33,9 +33,8 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
   const grouped = groupTasksByDueDate(filteredTasks);
 
   return (
-    <main className="min-h-screen">
-      <SiteHeader />
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+    <AppShell userEmail={user.email}>
+      <section className="py-4">
         <div className="flex flex-col justify-between gap-4 border-b pb-8 lg:flex-row lg:items-end">
           <div>
             <p className="text-sm font-semibold text-primary">任务管理</p>
@@ -114,7 +113,7 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
           </div>
         )}
       </section>
-    </main>
+    </AppShell>
   );
 }
 
