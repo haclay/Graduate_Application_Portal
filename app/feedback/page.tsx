@@ -1,11 +1,13 @@
 import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
+import { AuthAwareHeader } from "@/components/auth-aware-header";
 import { Button } from "@/components/ui/button";
+
+export const dynamic = "force-dynamic";
 
 export default function FeedbackPage() {
   return (
     <main className="min-h-screen">
-      <SiteHeader />
+      <AuthAwareHeader />
       <section className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
         <div className="border-b pb-8">
           <p className="text-sm font-semibold text-primary">Feedback</p>

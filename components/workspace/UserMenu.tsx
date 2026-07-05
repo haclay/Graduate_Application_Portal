@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import type { ComponentType } from "react";
 import Link from "next/link";
@@ -146,19 +146,19 @@ export function UserMenu({
             onNavigate={() => setMenuOpen(false)}
           />
           <MenuLink
-            href="/profile"
+            href="/settings"
             icon={Settings}
             label="账号设置"
             onNavigate={() => setMenuOpen(false)}
           />
           <MenuLink
-            href="/about"
+            href="/guide"
             icon={MapPinned}
             label="申请指南"
             onNavigate={() => setMenuOpen(false)}
           />
           <MenuLink
-            href="/feedback"
+            href="/help"
             icon={LifeBuoy}
             label="帮助与联系"
             onNavigate={() => setMenuOpen(false)}
