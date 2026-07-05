@@ -81,6 +81,24 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=我的 Supabase Publishable Key
 - `imported_at`：记录学校或项目数据被导入的时间。
 - `notes`：记录数据导入、核对或人工备注。
 - `import_jobs`：记录导入任务的来源、状态、成功数、错误数和错误信息。当前 RLS 仅允许登录用户读取自己创建的导入记录。
+## 第 5.5B 阶段：学校基础数据导入
+
+本阶段新增开发期学校基础数据导入能力，仅导入 `schools` 表的基础学校信息，不导入 `programs`、DDL、语言要求、GRE、学费或其他项目申请要求。
+
+新增页面和 API：
+
+- `/admin/import/universities`：登录用户可访问的开发期导入页面，正式上线前需要接入管理员权限控制。
+- `/api/import/universities`：服务端 API route，由服务端请求 Hipo Labs University Domains List API，前端不直接调用外部 API。
+
+导入策略：
+
+- 按 `slug` / `name` / `website_url` 去重。
+- 不删除已有学校数据。
+- 不覆盖任何已有学校记录，因此不会覆盖 `verification_status = verified` 的人工核对数据。
+- 新增学校的 `external_source` 为 `hipo_university_domains`，`verification_status` 为 `unverified`，`data_quality_score` 为 40。
+- 导入任务结果会记录到 `import_jobs`。
+
+注意：因为 `schools` 表保持 RLS 写入关闭，导入 API 需要在服务端配置 `SUPABASE_SERVICE_ROLE_KEY`。请不要把 service role key 写入前端代码，也不要使用 `NEXT_PUBLIC_` 前缀。
 ## 如何添加学校和项目数据
 
 当前学校和项目数据来自 seed 示例文件：
