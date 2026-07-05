@@ -5,13 +5,25 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { UNIVERSITY_IMPORT_COUNTRIES } from "@/lib/import/universities";
 
+type FailedImportRow = {
+  name: string;
+  reason: string;
+};
+
 type ImportResult = {
   country: string;
   errorCount: number;
+  failedRows?: FailedImportRow[];
+  importJobError?: string | null;
   insertedCount: number;
   skippedDuplicateCount: number;
   sourceUrl: string;
   totalCount: number;
+};
+
+type ImportErrorPayload = {
+  error?: string;
+  failedRows?: FailedImportRow[];
 };
 
 export function ImportUniversitiesForm() {
@@ -19,11 +31,13 @@ export function ImportUniversitiesForm() {
   const [isImporting, setIsImporting] = useState(false);
   const [result, setResult] = useState<ImportResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [failedRows, setFailedRows] = useState<FailedImportRow[]>([]);
 
   async function handleImport() {
     setIsImporting(true);
     setResult(null);
     setError(null);
+    setFailedRows([]);
 
     try {
       const response = await fetch("/api/import/universities", {
@@ -31,14 +45,21 @@ export function ImportUniversitiesForm() {
         headers: { "content-type": "application/json" },
         method: "POST",
       });
-      const payload = (await response.json()) as ImportResult | { error?: string };
+      const payload = (await response.json()) as ImportResult | ImportErrorPayload;
 
       if (!response.ok) {
         setError("error" in payload && payload.error ? payload.error : "导入失败，请稍后重试。");
+        setFailedRows("failedRows" in payload && payload.failedRows ? payload.failedRows : []);
         return;
       }
 
-      setResult(payload as ImportResult);
+      const importResult = payload as ImportResult;
+      setResult(importResult);
+      setFailedRows(importResult.failedRows ?? []);
+
+      if (importResult.importJobError) {
+        setError(`学校数据已处理，但导入日志写入失败：${importResult.importJobError}`);
+      }
     } catch (importError) {
       setError(importError instanceof Error ? importError.message : "导入失败，请稍后重试。");
     } finally {
@@ -72,14 +93,13 @@ export function ImportUniversitiesForm() {
         <Button disabled={isImporting} onClick={handleImport} type="button">
           {isImporting ? "导入中..." : "导入学校基础数据"}
         </Button>
-        <p className="text-sm text-muted-foreground">
-          数据源：Hipo Labs University Domains List
-        </p>
+        <p className="text-sm text-muted-foreground">数据源：Hipo Labs University Domains List</p>
       </div>
 
       {error ? (
         <div className="rounded-md border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">
-          {error}
+          <p className="font-medium">导入提示</p>
+          <p className="mt-2 leading-6">{error}</p>
         </div>
       ) : null}
 
@@ -90,11 +110,23 @@ export function ImportUniversitiesForm() {
             <Metric label="总数" value={result.totalCount} />
             <Metric label="新增数量" value={result.insertedCount} />
             <Metric label="跳过重复数量" value={result.skippedDuplicateCount} />
-            <Metric label="错误数量" value={result.errorCount} />
+            <Metric label="失败数量" value={result.errorCount} />
           </div>
-          <p className="mt-4 break-all text-xs text-muted-foreground">
-            Source URL: {result.sourceUrl}
-          </p>
+          <p className="mt-4 break-all text-xs text-muted-foreground">Source URL: {result.sourceUrl}</p>
+        </section>
+      ) : null}
+
+      {failedRows.length > 0 ? (
+        <section className="rounded-lg border border-destructive/20 bg-destructive/5 p-5">
+          <h2 className="text-sm font-semibold text-destructive">失败原因示例</h2>
+          <div className="mt-3 grid gap-3">
+            {failedRows.slice(0, 5).map((row, index) => (
+              <div key={`${row.name}-${index}`} className="rounded-md border bg-background p-3 text-sm">
+                <p className="font-medium">{row.name}</p>
+                <p className="mt-1 text-muted-foreground">{row.reason}</p>
+              </div>
+            ))}
+          </div>
         </section>
       ) : null}
     </div>

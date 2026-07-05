@@ -33,9 +33,14 @@ type ImportableSchool = {
   name_en: string;
   region: string | null;
   slug: string;
-  source_url: string;
+  source_url: string | null;
   verification_status: string;
   website_url: string | null;
+};
+
+type FailedImportRow = {
+  name: string;
+  reason: string;
 };
 
 function normalizeKey(value: string | null | undefined) {
@@ -43,13 +48,12 @@ function normalizeKey(value: string | null | undefined) {
 }
 
 function getExternalId(university: HipoUniversity, slug: string) {
-  return university.domains?.[0]?.trim() || slug;
+  return university.domains?.[0]?.trim() || university.name?.trim() || slug;
 }
 
 function toImportableSchool(
   university: HipoUniversity,
-  country: string,
-  sourceUrl: string,
+  fallbackCountry: string,
   importedAt: string,
 ): ImportableSchool | null {
   const name = normalizeUniversityName(university.name ?? "");
@@ -58,6 +62,7 @@ function toImportableSchool(
     return null;
   }
 
+  const country = university.country?.trim() || fallbackCountry;
   const slug = createSchoolSlug(name, country);
   const websiteUrl = normalizeWebsiteUrl(university.web_pages?.[0]);
 
@@ -72,10 +77,39 @@ function toImportableSchool(
     name_en: name,
     region: university["state-province"] ?? null,
     slug,
-    source_url: sourceUrl,
+    source_url: websiteUrl,
     verification_status: "unverified",
     website_url: websiteUrl,
   };
+}
+
+function getSchemaHelpMessage(message: string) {
+  const lowerMessage = message.toLowerCase();
+  const missingMetadata =
+    lowerMessage.includes("external_source") ||
+    lowerMessage.includes("external_id") ||
+    lowerMessage.includes("verification_status") ||
+    lowerMessage.includes("data_quality_score") ||
+    lowerMessage.includes("imported_at") ||
+    lowerMessage.includes("import_jobs");
+
+  if (!missingMetadata) {
+    return message;
+  }
+
+  return `${message}。请先在 Supabase SQL Editor 运行 supabase/migrations/005_add_data_expansion_metadata.sql。`;
+}
+
+function getResponseErrorMessage(error: unknown) {
+  if (!(error instanceof Error)) {
+    return "Unknown import error.";
+  }
+
+  if (error.message.includes("SUPABASE_SERVICE_ROLE_KEY")) {
+    return "缺少 SUPABASE_SERVICE_ROLE_KEY，请在 .env.local 中配置服务端 key。";
+  }
+
+  return getSchemaHelpMessage(error.message);
 }
 
 async function recordImportJob({
@@ -98,18 +132,89 @@ async function recordImportJob({
   status: string;
   successCount: number;
   totalCount: number;
+}): Promise<string | null> {
+  try {
+    const admin = createAdminClient();
+    const { error } = await admin.from("import_jobs").insert({
+      created_by: createdBy,
+      error_count: errorCount,
+      error_message: errorMessage,
+      finished_at: finishedAt,
+      source: `${UNIVERSITY_IMPORT_SOURCE}:${country}`,
+      started_at: startedAt,
+      status,
+      success_count: successCount,
+      total_count: totalCount,
+    });
+
+    return error ? getSchemaHelpMessage(error.message) : null;
+  } catch (error) {
+    return getResponseErrorMessage(error);
+  }
+}
+
+async function fetchUniversities(sourceUrl: string) {
+  const response = await fetch(sourceUrl, {
+    headers: { accept: "application/json" },
+    next: { revalidate: 0 },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Hipo Labs API returned ${response.status}: ${response.statusText}`);
+  }
+
+  const payload = await response.json();
+
+  if (!Array.isArray(payload)) {
+    throw new Error("Hipo Labs API returned an unexpected response shape.");
+  }
+
+  return payload as HipoUniversity[];
+}
+
+async function insertSchoolsOneByOne(admin: ReturnType<typeof createAdminClient>, schools: ImportableSchool[]) {
+  let insertedCount = 0;
+  const failedRows: FailedImportRow[] = [];
+
+  for (const school of schools) {
+    const { error } = await admin.from("schools").insert(school);
+
+    if (error) {
+      failedRows.push({
+        name: school.name,
+        reason: getSchemaHelpMessage(error.message),
+      });
+      continue;
+    }
+
+    insertedCount += 1;
+  }
+
+  return { failedRows, insertedCount };
+}
+
+async function logFailedImportJob({
+  country,
+  createdBy,
+  message,
+  startedAt,
+}: {
+  country: string;
+  createdBy: string;
+  message: string;
+  startedAt: string;
 }) {
-  const admin = createAdminClient();
-  await admin.from("import_jobs").insert({
-    created_by: createdBy,
-    error_count: errorCount,
-    error_message: errorMessage,
-    finished_at: finishedAt,
-    source: `${UNIVERSITY_IMPORT_SOURCE}:${country}`,
-    started_at: startedAt,
-    status,
-    success_count: successCount,
-    total_count: totalCount,
+  const finishedAt = new Date().toISOString();
+  await recordImportJob({
+    country,
+    createdBy,
+    errorCount: 1,
+    errorMessage: message,
+    finishedAt,
+    startedAt,
+    status: "failed",
+    successCount: 0,
+    totalCount: 0,
   });
 }
 
@@ -140,16 +245,7 @@ export async function POST(request: Request) {
   const sourceUrl = getUniversityImportSourceUrl(country);
 
   try {
-    const response = await fetch(sourceUrl, {
-      headers: { accept: "application/json" },
-      next: { revalidate: 0 },
-    });
-
-    if (!response.ok) {
-      throw new Error(`University data source returned ${response.status}.`);
-    }
-
-    const universities = (await response.json()) as HipoUniversity[];
+    const universities = await fetchUniversities(sourceUrl);
     const importedAt = new Date().toISOString();
     const admin = createAdminClient();
 
@@ -159,7 +255,7 @@ export async function POST(request: Request) {
       .returns<ExistingSchool[]>();
 
     if (existingError) {
-      throw new Error(existingError.message);
+      throw new Error(getSchemaHelpMessage(existingError.message));
     }
 
     const existingSlugs = new Set((existingSchools ?? []).map((school) => normalizeKey(school.slug)));
@@ -179,7 +275,7 @@ export async function POST(request: Request) {
     let invalidCount = 0;
 
     for (const university of universities) {
-      const school = toImportableSchool(university, country, sourceUrl, importedAt);
+      const school = toImportableSchool(university, country, importedAt);
 
       if (!school) {
         invalidCount += 1;
@@ -211,22 +307,23 @@ export async function POST(request: Request) {
     }
 
     let insertedCount = 0;
-    let errorCount = invalidCount;
-    let errorMessage: string | null = invalidCount > 0 ? `${invalidCount} invalid rows skipped.` : null;
+    const failedRows: FailedImportRow[] = [];
 
     if (importableSchools.length > 0) {
-      const { error: insertError } = await admin.from("schools").insert(importableSchools);
-
-      if (insertError) {
-        errorCount += importableSchools.length;
-        errorMessage = insertError.message;
-      } else {
-        insertedCount = importableSchools.length;
-      }
+      const insertResult = await insertSchoolsOneByOne(admin, importableSchools);
+      insertedCount = insertResult.insertedCount;
+      failedRows.push(...insertResult.failedRows);
     }
 
+    const errorCount = invalidCount + failedRows.length;
+    const errorMessage =
+      errorCount > 0
+        ? [invalidCount > 0 ? `${invalidCount} invalid rows skipped.` : null, failedRows[0]?.reason ?? null]
+            .filter(Boolean)
+            .join(" ")
+        : null;
     const finishedAt = new Date().toISOString();
-    await recordImportJob({
+    const importJobError = await recordImportJob({
       country,
       createdBy: user.id,
       errorCount,
@@ -241,31 +338,17 @@ export async function POST(request: Request) {
     return NextResponse.json({
       country,
       errorCount,
+      failedRows: failedRows.slice(0, 10),
+      importJobError,
       insertedCount,
       skippedDuplicateCount,
       sourceUrl,
       totalCount: universities.length,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown import error.";
-    const finishedAt = new Date().toISOString();
+    const message = getResponseErrorMessage(error);
+    await logFailedImportJob({ country, createdBy: user.id, message, startedAt });
 
-    try {
-      await recordImportJob({
-        country,
-        createdBy: user.id,
-        errorCount: 1,
-        errorMessage: message,
-        finishedAt,
-        startedAt,
-        status: "failed",
-        successCount: 0,
-        totalCount: 0,
-      });
-    } catch {
-      // Do not hide the original import failure if import job logging is unavailable.
-    }
-
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: message, failedRows: [{ name: country, reason: message }] }, { status: 500 });
   }
 }
