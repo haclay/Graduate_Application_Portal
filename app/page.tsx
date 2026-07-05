@@ -72,14 +72,14 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-background/20" />
         <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:py-24">
           <div className="max-w-3xl">
-            <p className="mb-4 text-sm font-semibold text-primary">研究生申请工作台</p>
-            <h1 className="text-4xl font-semibold leading-tight tracking-normal text-foreground sm:text-5xl lg:text-6xl">
+            <p className="hero-fade-up mb-4 text-sm font-semibold text-primary" style={{ animationDelay: "80ms" }}>研究生申请工作台</p>
+            <h1 className="hero-fade-up text-4xl font-semibold leading-tight tracking-normal text-foreground sm:text-5xl lg:text-6xl" style={{ animationDelay: "220ms" }}>
               像学长学姐一样陪伴，像专业顾问一样规划
             </h1>
-            <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">
+            <p className="hero-fade-up mt-5 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl" style={{ animationDelay: "360ms" }}>
               MyGrad 陪你规划好从选校到入学的每一步，让研究生申请不再一个人摸索
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <div className="hero-fade-up mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap" style={{ animationDelay: "520ms" }}>
               <Button asChild size="lg">
                 <Link href="/profile/edit">
                   开始填写背景
@@ -88,9 +88,6 @@ export default function HomePage() {
               </Button>
               <Button asChild className="bg-background/85 backdrop-blur hover:bg-background" size="lg" variant="outline">
                 <Link href="/programs">查看学校项目库</Link>
-              </Button>
-              <Button asChild className="bg-background/85 backdrop-blur hover:bg-background" size="lg" variant="outline">
-                <Link href="/applications">进入申请工作台</Link>
               </Button>
             </div>
           </div>
