@@ -1,12 +1,25 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { LogIn } from "lucide-react";
 
 import { LoginForm } from "@/components/auth/login-form";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/server";
 
-export default function LoginPage() {
+export const dynamic = "force-dynamic";
+
+export default async function LoginPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    redirect("/dashboard");
+  }
+
   return (
     <main className="min-h-screen">
       <SiteHeader />

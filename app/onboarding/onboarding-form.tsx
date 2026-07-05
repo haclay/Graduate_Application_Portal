@@ -7,6 +7,29 @@ import { Button } from "@/components/ui/button";
 import type { StudentProfile, TestScore } from "@/lib/profile/types";
 import { createClient } from "@/lib/supabase/client";
 
+const undergraduateCountryOptions = [
+  "中国",
+  "英国",
+  "新加坡",
+  "香港",
+  "美国",
+  "加拿大",
+  "瑞士",
+  "澳大利亚",
+  "德国",
+  "法国",
+  "日本",
+  "韩国",
+  "马来西亚",
+  "荷兰",
+  "新西兰",
+  "爱尔兰",
+  "比利时",
+  "沙特阿拉伯",
+  "意大利",
+  "其他",
+];
+
 const countryOptions = [
   "United States",
   "United Kingdom",
@@ -234,7 +257,7 @@ export function OnboardingForm({
       return;
     }
 
-    router.push("/dashboard");
+    router.replace("/dashboard");
     router.refresh();
   }
 
@@ -255,14 +278,14 @@ export function OnboardingForm({
         {step === 0 ? (
           <StepShell description="姓名用于工作台显示，你之后可以修改。" title="首先，我们怎么称呼你？">
             <TextInput
-              label="full_name"
+              label="姓名"
               onChange={(value) => updateField("full_name", value)}
               placeholder="请输入姓名"
               required
               value={values.full_name}
             />
             <TextInput
-              label="nickname，可选"
+              label="昵称，可选"
               onChange={(value) => updateField("nickname", value)}
               placeholder="例如：Yuyang"
               value={values.nickname}
@@ -272,16 +295,18 @@ export function OnboardingForm({
 
         {step === 1 ? (
           <StepShell title="介绍一下你的学校">
-            <TextInput
-              label="undergraduate_country"
+            <SearchableTextInput
+              label="本科学校所在国家 / 地区"
+              listId="undergraduate-country-options"
               onChange={(value) => updateField("undergraduate_country", value)}
-              placeholder="例如：China / United States"
+              options={undergraduateCountryOptions}
+              placeholder="搜索或输入国家 / 地区"
               value={values.undergraduate_country}
             />
             <TextInput
-              label="undergraduate_school"
+              label="本科学校"
               onChange={(value) => updateField("undergraduate_school", value)}
-              placeholder="请输入本科学校"
+              placeholder="请输入本科学校名称"
               value={values.undergraduate_school}
             />
           </StepShell>
@@ -290,13 +315,13 @@ export function OnboardingForm({
         {step === 2 ? (
           <StepShell title="你现在的专业和年级是？">
             <TextInput
-              label="undergraduate_major"
+              label="本科专业"
               onChange={(value) => updateField("undergraduate_major", value)}
               placeholder="例如：Computer Science"
               value={values.undergraduate_major}
             />
             <TextInput
-              label="current_year"
+              label="当前年级"
               onChange={(value) => updateField("current_year", value)}
               placeholder="例如：大三 / Senior / 已毕业"
               value={values.current_year}
@@ -307,14 +332,14 @@ export function OnboardingForm({
         {step === 3 ? (
           <StepShell title="你的成绩大概是多少？">
             <TextInput
-              label="gpa"
+              label="GPA / 均分"
               onChange={(value) => updateField("gpa", value)}
               placeholder="例如：3.7"
               type="number"
               value={values.gpa}
             />
             <TextInput
-              label="gpa_scale"
+              label="满分制"
               onChange={(value) => updateField("gpa_scale", value)}
               placeholder="4.0 / 5.0 / 100 / 其他数字"
               type="number"
@@ -324,10 +349,10 @@ export function OnboardingForm({
         ) : null}
 
         {step === 4 ? (
-          <StepShell title="你有哪些语言或标准化考试成绩？">
+          <StepShell title="语言与标准化考试成绩">
             <div className="grid gap-3 sm:grid-cols-[180px_1fr_auto] sm:items-end">
               <label className="grid gap-2 text-sm font-medium">
-                type
+                考试类型
                 <select
                   className="h-10 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
                   onChange={(event) => setScoreDraft((current) => ({ ...current, type: event.target.value }))}
@@ -339,7 +364,7 @@ export function OnboardingForm({
                 </select>
               </label>
               <TextInput
-                label="score"
+                label="成绩"
                 onChange={(value) => setScoreDraft((current) => ({ ...current, score: value }))}
                 placeholder="例如：7.0 / 100 / 320"
                 value={scoreDraft.score}
@@ -362,7 +387,7 @@ export function OnboardingForm({
         ) : null}
 
         {step === 5 ? (
-          <StepShell title="你想申请哪些国家或地区？">
+          <StepShell title="目标申请国家 / 地区">
             <OptionGrid
               options={countryOptions}
               selected={values.target_countries}
@@ -372,7 +397,7 @@ export function OnboardingForm({
         ) : null}
 
         {step === 6 ? (
-          <StepShell title="你感兴趣的研究生方向是？">
+          <StepShell title="目标专业方向">
             <OptionGrid
               options={majorOptions}
               selected={values.target_majors}
@@ -444,7 +469,7 @@ function TextInput({
 }) {
   return (
     <label className="grid gap-2 text-sm font-medium">
-      {label}{required ? <span className="text-destructive"> *</span> : null}
+      <span>{label}{required ? <span className="text-destructive"> *</span> : null}</span>
       <input
         className="h-10 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
         onChange={(event) => onChange(event.target.value)}
@@ -452,6 +477,43 @@ function TextInput({
         type={type}
         value={value}
       />
+    </label>
+  );
+}
+
+function SearchableTextInput({
+  label,
+  listId,
+  onChange,
+  options,
+  placeholder,
+  value,
+}: {
+  label: string;
+  listId: string;
+  onChange: (value: string) => void;
+  options: string[];
+  placeholder?: string;
+  value: string;
+}) {
+  return (
+    <label className="grid gap-2 text-sm font-medium">
+      {label}
+      <input
+        className="h-10 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+        list={listId}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+        value={value}
+      />
+      <datalist id={listId}>
+        {options.map((option) => (
+          <option key={option} value={option} />
+        ))}
+      </datalist>
+      <span className="text-xs font-normal text-muted-foreground">
+        可以从下拉选项中选择，也可以直接输入其他国家或地区。
+      </span>
     </label>
   );
 }

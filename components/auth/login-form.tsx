@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -27,7 +27,7 @@ export function LoginForm() {
 
     if (signInError) {
       setIsSubmitting(false);
-      setError(signInError.message);
+      setError("邮箱或密码不正确。如果你还没有账号，请先注册。");
       return;
     }
 
@@ -52,7 +52,7 @@ export function LoginForm() {
       return;
     }
 
-    router.push(profile?.full_name?.trim() ? "/dashboard" : "/onboarding");
+    router.replace(profile?.full_name?.trim() ? "/dashboard" : "/onboarding");
     router.refresh();
   }
 
@@ -82,9 +82,25 @@ export function LoginForm() {
         />
       </label>
       {error ? (
-        <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          {error}
-        </p>
+        <div className="grid gap-3 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-3 text-sm text-destructive">
+          <p>{error}</p>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Button
+              className="border-destructive/30 bg-background text-destructive hover:bg-destructive/10"
+              onClick={() => {
+                setError(null);
+                setPassword("");
+              }}
+              type="button"
+              variant="outline"
+            >
+              重新输入
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/register">去注册</Link>
+            </Button>
+          </div>
+        </div>
       ) : null}
       <Button disabled={isSubmitting} type="submit">
         {isSubmitting ? "登录中..." : "登录"}

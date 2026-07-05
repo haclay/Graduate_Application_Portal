@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 
 export function RegisterForm() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -40,7 +42,8 @@ export function RegisterForm() {
     }
 
     if (data.session) {
-      setSuccess("注册成功。你现在可以进入工作台，也可以先完善背景档案。");
+      router.replace("/onboarding");
+      router.refresh();
       return;
     }
 
