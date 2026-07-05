@@ -1,3 +1,8 @@
+﻿export type TestScore = {
+  score: string;
+  type: string;
+};
+
 export type StudentProfile = {
   id: string;
   user_id: string;
@@ -13,6 +18,7 @@ export type StudentProfile = {
   toefl: number | null;
   gre: number | null;
   gmat: number | null;
+  test_scores: TestScore[] | null;
   research_experience: string | null;
   internship_experience: string | null;
   project_experience: string | null;

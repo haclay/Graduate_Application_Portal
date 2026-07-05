@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -20,19 +20,39 @@ export function LoginForm() {
     setIsSubmitting(true);
 
     const supabase = createClient();
-    const { error: signInError } = await supabase.auth.signInWithPassword({
+    const { data, error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    setIsSubmitting(false);
-
     if (signInError) {
+      setIsSubmitting(false);
       setError(signInError.message);
       return;
     }
 
-    router.push("/dashboard");
+    const userId = data.user?.id;
+
+    if (!userId) {
+      setIsSubmitting(false);
+      setError("登录成功，但无法读取用户信息。请刷新后重试。");
+      return;
+    }
+
+    const { data: profile, error: profileError } = await supabase
+      .from("student_profiles")
+      .select("full_name")
+      .eq("user_id", userId)
+      .maybeSingle<{ full_name: string | null }>();
+
+    setIsSubmitting(false);
+
+    if (profileError) {
+      setError(profileError.message);
+      return;
+    }
+
+    router.push(profile?.full_name?.trim() ? "/dashboard" : "/onboarding");
     router.refresh();
   }
 

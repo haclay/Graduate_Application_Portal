@@ -98,6 +98,7 @@ export default async function ProfilePage() {
                 ["TOEFL", formatScore(profile.toefl)],
                 ["GRE", formatScore(profile.gre)],
                 ["GMAT", formatScore(profile.gmat)],
+                ["语言/标化考试", formatTestScores(profile.test_scores)],
               ]}
               title="学术背景与语言成绩"
             />
@@ -129,6 +130,16 @@ export default async function ProfilePage() {
   );
 }
 
+function formatTestScores(value: StudentProfile["test_scores"]) {
+  if (!value || value.length === 0) {
+    return null;
+  }
+
+  return value
+    .filter((item) => item.type?.trim() && item.score?.trim())
+    .map((item) => `${item.type}: ${item.score}`)
+    .join("\n");
+}
 function formatScore(value: number | null | undefined) {
   return value === null || value === undefined ? null : String(value);
 }

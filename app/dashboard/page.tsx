@@ -82,6 +82,11 @@ export default async function DashboardPage() {
     .select("*")
     .eq("user_id", user.id)
     .maybeSingle<StudentProfile>();
+
+  if (!profile?.full_name?.trim()) {
+    redirect("/onboarding");
+  }
+
   const completion = calculateProfileCompletion(profile);
   const [applicationsResult, tasksResult, deadlinesResult] = await Promise.all([
     getUserApplications(user.id),
