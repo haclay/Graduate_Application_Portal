@@ -2,10 +2,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExternalLink } from "lucide-react";
 
+import { AddToApplicationButton } from "@/components/applications/AddToApplicationButton";
 import { SourceNotice } from "@/components/data/source-notice";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { getProgramBySlug } from "@/lib/programs/queries";
+import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +19,13 @@ export default async function ProgramDetailPage({
   params,
 }: ProgramDetailPageProps) {
   const { slug } = await params;
-  const programResult = await getProgramBySlug(slug);
+  const [programResult, supabase] = await Promise.all([
+    getProgramBySlug(slug),
+    createClient(),
+  ]);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (programResult.error) {
     return <DetailError message={programResult.error} />;
@@ -36,14 +44,17 @@ export default async function ProgramDetailPage({
         <Button asChild variant="ghost">
           <Link href="/programs">返回项目库</Link>
         </Button>
-        <div className="mt-6 border-b pb-8">
-          <p className="text-sm font-semibold text-primary">项目详情</p>
-          <h1 className="mt-2 text-3xl font-semibold">{program.name}</h1>
-          <p className="mt-3 text-muted-foreground">
-            {program.schools?.name ?? "未知学校"}
-            {program.schools?.country ? ` · ${program.schools.country}` : ""}
-            {program.schools?.city ? ` / ${program.schools.city}` : ""}
-          </p>
+        <div className="mt-6 flex flex-col justify-between gap-5 border-b pb-8 lg:flex-row lg:items-end">
+          <div>
+            <p className="text-sm font-semibold text-primary">项目详情</p>
+            <h1 className="mt-2 text-3xl font-semibold">{program.name}</h1>
+            <p className="mt-3 text-muted-foreground">
+              {program.schools?.name ?? "未知学校"}
+              {program.schools?.country ? ` · ${program.schools.country}` : ""}
+              {program.schools?.city ? ` / ${program.schools.city}` : ""}
+            </p>
+          </div>
+          <AddToApplicationButton programId={program.id} userId={user?.id ?? null} />
         </div>
 
         <div className="mt-6">
@@ -225,8 +236,7 @@ function DeadlineBlock({
             <div className="rounded-md border bg-background p-4" key={index}>
               <p className="font-medium">{deadline.round_name ?? "申请轮次待核对"}</p>
               <p className="mt-2 text-sm text-muted-foreground">
-                {deadline.deadline_date ?? "DDL 待核对"} ·{" "}
-                {deadline.intake_term ?? "入学季待核对"}
+                {deadline.deadline_date ?? "DDL 待核对"} · {deadline.intake_term ?? "入学季待核对"}
               </p>
               <p className="mt-2 text-sm text-muted-foreground">
                 {deadline.notes ?? "请以官网为准。"}

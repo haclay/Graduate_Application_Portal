@@ -1,11 +1,18 @@
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 
+import { AddToApplicationButton } from "@/components/applications/AddToApplicationButton";
 import { Button } from "@/components/ui/button";
 import type { MatchingResult } from "@/lib/matching/types";
 import { tierLabels } from "@/lib/matching/types";
 
-export function RecommendationCard({ result }: { result: MatchingResult }) {
+export function RecommendationCard({
+  result,
+  userId,
+}: {
+  result: MatchingResult;
+  userId: string;
+}) {
   const { nearestDeadline, program, school } = result;
 
   return (
@@ -41,18 +48,21 @@ export function RecommendationCard({ result }: { result: MatchingResult }) {
       <FeedbackList items={result.risks} title="风险提示" />
       <FeedbackList items={result.improvements} title="补强建议" />
 
-      <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-        <Button asChild>
-          <Link href={`/programs/${program.slug}`}>查看项目详情</Link>
-        </Button>
-        {program.official_url ? (
-          <Button asChild variant="outline">
-            <a href={program.official_url} rel="noreferrer" target="_blank">
-              官网
-              <ExternalLink className="h-4 w-4" aria-hidden />
-            </a>
+      <div className="mt-5 grid gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Button asChild>
+            <Link href={`/programs/${program.slug}`}>查看项目详情</Link>
           </Button>
-        ) : null}
+          {program.official_url ? (
+            <Button asChild variant="outline">
+              <a href={program.official_url} rel="noreferrer" target="_blank">
+                官网
+                <ExternalLink className="h-4 w-4" aria-hidden />
+              </a>
+            </Button>
+          ) : null}
+        </div>
+        <AddToApplicationButton programId={program.id} userId={userId} />
       </div>
     </article>
   );

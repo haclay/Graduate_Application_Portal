@@ -5,9 +5,11 @@ import { tierLabels } from "@/lib/matching/types";
 export function RecommendationGroup({
   results,
   tier,
+  userId,
 }: {
   results: MatchingResult[];
   tier: MatchingTier;
+  userId: string;
 }) {
   return (
     <section className="rounded-lg border bg-card p-5">
@@ -30,7 +32,7 @@ export function RecommendationGroup({
       ) : (
         <div className="mt-5 grid gap-4">
           {results.map((result) => (
-            <RecommendationCard key={result.program.id} result={result} />
+            <RecommendationCard key={result.program.id} result={result} userId={userId} />
           ))}
         </div>
       )}

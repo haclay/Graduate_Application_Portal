@@ -115,6 +115,7 @@ export default async function MatchingResultsPage() {
                 key={tier}
                 results={recommendations.filter((result) => result.tier === tier)}
                 tier={tier}
+                userId={user.id}
               />
             ))}
           </div>
