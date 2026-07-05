@@ -46,7 +46,7 @@ export type Program = {
 };
 
 export type ProgramWithSchool = Program & {
-  schools: Pick<School, "id" | "name" | "name_en" | "slug" | "country" | "city"> | null;
+  schools: Pick<School, "id" | "name" | "name_en" | "slug" | "country" | "city" | "qs_rank_2027" | "qs_rank_display" | "is_qs_top_500" | "is_active"> | null;
 };
 
 export type ProgramWithRelations = ProgramWithSchool & {

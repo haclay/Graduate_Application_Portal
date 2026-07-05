@@ -99,6 +99,46 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=我的 Supabase Publishable Key
 - 导入任务结果会记录到 `import_jobs`。
 
 注意：因为 `schools` 表保持 RLS 写入关闭，导入 API 需要在服务端配置 `SUPABASE_SERVICE_ROLE_KEY`。请不要把 service role key 写入前端代码，也不要使用 `NEXT_PUBLIC_` 前缀。
+
+## 第 5.5E 阶段：QS 2027 Top 500 学校库筛选
+
+本阶段新增 QS World University Rankings 2027 Top 500 CSV 导入与学校库过滤流程。系统不会删除已有 schools 数据，而是通过 `is_qs_top_500` 和 `is_active` 标记控制普通用户前端展示范围。
+
+需要先在 Supabase SQL Editor 运行：
+
+```sql
+supabase/migrations/006_add_qs_ranking_fields_to_schools.sql
+```
+
+新增 schools 字段包括：`qs_rank_2027`、`qs_rank_display`、`ranking_year`、`ranking_source`、`ranking_source_url`、`is_qs_top_500`、`is_active`、`aliases`。
+
+CSV 模板位置：
+
+- `docs/templates/qs_2027_top500_template.csv`
+
+CSV 字段说明：
+
+- `qs_rank_2027`：数字排名，例如 `1`。
+- `rank_display`：展示排名，例如 `=2`。
+- `name` / `name_en`：学校名称。
+- `country` / `city`：学校所在国家和城市。
+- `website_url`：学校官网。
+- `qs_url`：QS 来源页面。
+- `aliases`：别名，用英文分号分隔，例如 `UCL;University College London`。
+
+导入入口：
+
+- `/admin/import/qs-top500`
+
+导入规则：
+
+- 先将所有学校的 `is_qs_top_500` 标记为 `false`。
+- CSV 中匹配到的学校会更新 QS 排名字段，并设置 `is_qs_top_500 = true`、`is_active = true`。
+- CSV 中无法匹配的 Top 500 学校会新增到 `schools` 表。
+- 同步完成后，非 Top 500 学校会标记为 `is_active = false`，不会被物理删除。
+- 本阶段不直接删除非 Top 500，是为了避免破坏已有项目、申请清单、任务和历史数据引用。
+
+Supabase 检查方式：在 Table Editor 打开 `schools` 表，确认 QS 字段存在，并筛选 `is_qs_top_500 = true`、`is_active = true` 查看当前前端展示范围。
 ## 如何添加学校和项目数据
 
 当前学校和项目数据来自 seed 示例文件：

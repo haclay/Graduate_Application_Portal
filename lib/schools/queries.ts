@@ -15,15 +15,16 @@ function getErrorMessage(error: unknown) {
   return "读取学校数据失败，请稍后重试。";
 }
 
-export async function getSchools(
-  filters: SchoolFilters = {},
-): Promise<QueryResult<School[]>> {
+export async function getSchools(filters: SchoolFilters = {}): Promise<QueryResult<School[]>> {
   try {
     const supabase = await createClient();
     let query = supabase
       .from("schools")
       .select("*")
       .eq("is_published", true)
+      .eq("is_active", true)
+      .eq("is_qs_top_500", true)
+      .order("qs_rank_2027", { ascending: true, nullsFirst: false })
       .order("country", { ascending: true })
       .order("name", { ascending: true });
 
@@ -57,9 +58,7 @@ export async function getSchools(
   }
 }
 
-export async function getSchoolBySlug(
-  slug: string,
-): Promise<QueryResult<School | null>> {
+export async function getSchoolBySlug(slug: string): Promise<QueryResult<School | null>> {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -67,6 +66,8 @@ export async function getSchoolBySlug(
       .select("*")
       .eq("slug", slug)
       .eq("is_published", true)
+      .eq("is_active", true)
+      .eq("is_qs_top_500", true)
       .maybeSingle<School>();
 
     if (error) {
@@ -79,15 +80,13 @@ export async function getSchoolBySlug(
   }
 }
 
-export async function getProgramsBySchoolId(
-  schoolId: string,
-): Promise<QueryResult<ProgramWithSchool[]>> {
+export async function getProgramsBySchoolId(schoolId: string): Promise<QueryResult<ProgramWithSchool[]>> {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("programs")
       .select(
-        "*, schools(id, name, name_en, slug, country, city)",
+        "*, schools(id, name, name_en, slug, country, city, qs_rank_2027, qs_rank_display, is_active, is_qs_top_500)",
       )
       .eq("school_id", schoolId)
       .eq("is_published", true)

@@ -92,10 +92,15 @@ export default async function SchoolsPage({ searchParams }: SchoolsPageProps) {
                       {school.name_en ?? school.name}
                     </p>
                   </div>
-                  <p className="rounded-md bg-secondary px-3 py-1 text-sm text-secondary-foreground">
-                    {school.country}
-                    {school.city ? ` / ${school.city}` : ""}
-                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <p className="rounded-md bg-secondary px-3 py-1 text-sm text-secondary-foreground">
+                      {school.country}
+                      {school.city ? ` / ${school.city}` : ""}
+                    </p>
+                    <p className="rounded-md border bg-background px-3 py-1 text-sm font-medium">
+                      QS 2027 排名：{formatQsRank(school)}
+                    </p>
+                  </div>
                 </div>
                 <p className="mt-4 line-clamp-3 text-sm leading-6 text-muted-foreground">
                   {school.description ?? "暂无简介。"}
@@ -146,4 +151,8 @@ function EmptyState({ label }: { label: string }) {
       {label}
     </div>
   );
+}
+
+function formatQsRank(school: { qs_rank_2027: number | null; qs_rank_display: string | null }) {
+  return school.qs_rank_display ?? (school.qs_rank_2027 ? `#${school.qs_rank_2027}` : "未纳入当前 Top 500 展示范围");
 }

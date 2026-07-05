@@ -40,17 +40,29 @@ export default async function MatchingResultsPage() {
     redirect("/profile/edit");
   }
 
-  const [schoolsResponse, programsResponse, deadlinesResponse] = await Promise.all([
-    supabase
-      .from("schools")
-      .select("*")
-      .eq("is_published", true)
-      .returns<School[]>(),
-    supabase
-      .from("programs")
-      .select("*")
-      .eq("is_published", true)
-      .returns<Program[]>(),
+  const schoolsResponse = await supabase
+    .from("schools")
+    .select("*")
+    .eq("is_published", true)
+    .eq("is_active", true)
+    .eq("is_qs_top_500", true)
+    .returns<School[]>();
+
+  if (schoolsResponse.error) {
+    return <ErrorPage message={schoolsResponse.error.message} userEmail={user.email} />;
+  }
+
+  const schools = schoolsResponse.data ?? [];
+  const schoolIds = schools.map((school) => school.id);
+  const [programsResponse, deadlinesResponse] = await Promise.all([
+    schoolIds.length > 0
+      ? supabase
+          .from("programs")
+          .select("*")
+          .eq("is_published", true)
+          .in("school_id", schoolIds)
+          .returns<Program[]>()
+      : Promise.resolve({ data: [] as Program[], error: null }),
     supabase
       .from("program_deadlines")
       .select("*")
@@ -58,17 +70,12 @@ export default async function MatchingResultsPage() {
       .returns<ProgramDeadline[]>(),
   ]);
 
-  const dataError =
-    schoolsResponse.error?.message ??
-    programsResponse.error?.message ??
-    deadlinesResponse.error?.message ??
-    null;
+  const dataError = programsResponse.error?.message ?? deadlinesResponse.error?.message ?? null;
 
   if (dataError) {
     return <ErrorPage message={dataError} userEmail={user.email} />;
   }
 
-  const schools = schoolsResponse.data ?? [];
   const programs = programsResponse.data ?? [];
   const deadlines = deadlinesResponse.data ?? [];
   const completion = calculateProfileCompletion(profile);

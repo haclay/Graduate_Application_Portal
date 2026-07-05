@@ -1,8 +1,4 @@
-import type {
-  ProgramFilters,
-  ProgramWithRelations,
-  ProgramWithSchool,
-} from "@/lib/programs/types";
+import type { ProgramFilters, ProgramWithRelations, ProgramWithSchool } from "@/lib/programs/types";
 import type { QueryResult } from "@/lib/schools/types";
 import { createClient } from "@/lib/supabase/server";
 
@@ -19,15 +15,17 @@ function getErrorMessage(error: unknown) {
   return "读取项目数据失败，请稍后重试。";
 }
 
-export async function getPrograms(
-  filters: ProgramFilters = {},
-): Promise<QueryResult<ProgramWithSchool[]>> {
+export async function getPrograms(filters: ProgramFilters = {}): Promise<QueryResult<ProgramWithSchool[]>> {
   try {
     const supabase = await createClient();
     let query = supabase
       .from("programs")
-      .select("*, schools(id, name, name_en, slug, country, city)")
+      .select(
+        "*, schools!inner(id, name, name_en, slug, country, city, qs_rank_2027, qs_rank_display, is_active, is_qs_top_500)",
+      )
       .eq("is_published", true)
+      .eq("schools.is_active", true)
+      .eq("schools.is_qs_top_500", true)
       .order("name", { ascending: true });
 
     const searchQuery = normalize(filters.query);
@@ -55,9 +53,7 @@ export async function getPrograms(
     }
 
     const country = normalize(filters.country);
-    const filteredData = country
-      ? (data ?? []).filter((program) => program.schools?.country === country)
-      : data ?? [];
+    const filteredData = country ? (data ?? []).filter((program) => program.schools?.country === country) : data ?? [];
 
     return { data: filteredData, error: null };
   } catch (error) {
@@ -65,18 +61,18 @@ export async function getPrograms(
   }
 }
 
-export async function getProgramBySlug(
-  slug: string,
-): Promise<QueryResult<ProgramWithRelations | null>> {
+export async function getProgramBySlug(slug: string): Promise<QueryResult<ProgramWithRelations | null>> {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("programs")
       .select(
-        "*, schools(id, name, name_en, slug, country, city), program_deadlines(*)",
+        "*, schools!inner(id, name, name_en, slug, country, city, qs_rank_2027, qs_rank_display, is_active, is_qs_top_500), program_deadlines(*)",
       )
       .eq("slug", slug)
       .eq("is_published", true)
+      .eq("schools.is_active", true)
+      .eq("schools.is_qs_top_500", true)
       .maybeSingle<ProgramWithRelations>();
 
     if (error) {

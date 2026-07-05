@@ -53,6 +53,7 @@ export default async function SchoolDetailPage({
               <InfoItem label="国家" value={school.country} />
               <InfoItem label="城市" value={school.city} />
               <InfoItem label="地区" value={school.region} />
+              <InfoItem label="QS 2027 排名" value={formatQsRank(school)} />
               <InfoItem label="学费范围" value={school.tuition_range} />
               <InfoItem label="生活成本" value={school.living_cost_range} />
               <InfoItem label="最后核对日期" value={school.last_verified_at} />
@@ -164,4 +165,7 @@ function InfoItem({
       <dd className="mt-2 text-sm font-medium">{value ?? "未填写"}</dd>
     </div>
   );
+}
+function formatQsRank(school: { qs_rank_2027: number | null; qs_rank_display: string | null }) {
+  return school.qs_rank_display ?? (school.qs_rank_2027 ? `#${school.qs_rank_2027}` : "未纳入当前 Top 500 展示范围");
 }
