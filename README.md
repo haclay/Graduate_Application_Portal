@@ -54,6 +54,8 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=我的 Supabase Publishable Key
 2. `supabase/migrations/002_create_school_program_tables.sql`
 3. `supabase/seed/001_seed_schools_programs.sql`
 4. `supabase/migrations/003_create_application_tables.sql`
+5. `supabase/migrations/004_add_onboarding_fields.sql`
+6. `supabase/migrations/005_add_data_expansion_metadata.sql`
 
 第 5 阶段新增的数据表：
 
@@ -62,6 +64,23 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=我的 Supabase Publishable Key
 
 两张表都开启了 Row Level Security，用户只能读取、创建、更新和删除自己的数据。
 
+## 第 5.5A 阶段：数据扩容元数据
+
+本阶段为后续 API 导入、CSV 导入和人工核对建立基础数据结构，不接入 AI、不接入爬虫、不调用外部 API。
+
+新增 migration：
+
+- `supabase/migrations/005_add_data_expansion_metadata.sql`
+
+数据质量和来源字段用途：
+
+- `external_source`：记录未来数据来源，例如 CSV、学校官网整理或其他导入渠道。
+- `external_id`：记录外部来源中的原始 ID，便于去重和后续同步。
+- `verification_status`：记录数据核对状态，默认为 `unverified`。
+- `data_quality_score`：记录数据完整度或质量分，当前限制为 0-100。
+- `imported_at`：记录学校或项目数据被导入的时间。
+- `notes`：记录数据导入、核对或人工备注。
+- `import_jobs`：记录导入任务的来源、状态、成功数、错误数和错误信息。当前 RLS 仅允许登录用户读取自己创建的导入记录。
 ## 如何添加学校和项目数据
 
 当前学校和项目数据来自 seed 示例文件：
