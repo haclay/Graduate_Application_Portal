@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 
 const navItems = [
   { href: "/", label: "首页" },
+  { href: "/schools", label: "学校库" },
+  { href: "/programs", label: "项目库" },
   { href: "/dashboard", label: "工作台" },
   { href: "/profile", label: "背景档案" },
   { href: "/register", label: "注册" },
@@ -21,16 +23,21 @@ export function SiteHeader() {
           </span>
           <span>MyGrad</span>
         </Link>
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden items-center gap-1 lg:flex">
           {navItems.map((item) => (
             <Button asChild key={item.href} variant="ghost">
               <Link href={item.href}>{item.label}</Link>
             </Button>
           ))}
         </nav>
-        <Button asChild className="md:hidden" size="sm" variant="outline">
-          <Link href="/login">登录</Link>
-        </Button>
+        <div className="flex gap-2 lg:hidden">
+          <Button asChild size="sm" variant="outline">
+            <Link href="/schools">学校库</Link>
+          </Button>
+          <Button asChild size="sm" variant="outline">
+            <Link href="/login">登录</Link>
+          </Button>
+        </div>
       </div>
     </header>
   );
