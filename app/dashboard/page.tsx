@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { ComponentType } from "react";
 import {
@@ -42,7 +42,7 @@ const dashboardSections = [
     icon: Sparkles,
   },
   {
-    title: "申请清单",
+    title: "申请工作台",
     description: "管理目标项目、DDL、任务和申请状态。",
     href: "/applications",
     icon: ClipboardList,
@@ -121,8 +121,8 @@ export default async function DashboardPage() {
       <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <div className="flex flex-col justify-between gap-4 border-b pb-8 lg:flex-row lg:items-end">
           <div>
-            <p className="text-sm font-semibold text-primary">学生工作台</p>
-            <h1 className="mt-2 text-3xl font-semibold">申请规划总览</h1>
+            <p className="text-sm font-semibold text-primary">申请总览</p>
+            <h1 className="mt-2 text-3xl font-semibold">研究生申请工作台</h1>
             <p className="mt-3 max-w-2xl text-muted-foreground">
               当前登录账号：{user.email ?? "未知邮箱"}
             </p>
@@ -155,6 +155,13 @@ export default async function DashboardPage() {
           </div>
         </div>
 
+        <NextStepCard
+          applicationsCount={applications.length}
+          completionPercentage={completion.percentage}
+          recentDeadlines={recentDeadlines.slice(0, 3)}
+          recentTasks={recentTasks.slice(0, 3)}
+        />
+
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <MetricCard icon={ClipboardList} label="我的申请" value={applications.length} />
           <MetricCard icon={ListChecks} label="未完成任务" value={openTasks.length} />
@@ -170,7 +177,7 @@ export default async function DashboardPage() {
           <div className="mt-8 rounded-lg border bg-card p-8 text-center">
             <h2 className="text-xl font-semibold">你还没有申请项目</h2>
             <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground">
-              可以先去项目库或选校推荐添加。
+              你还没有申请项目，可以先去项目库或选校推荐添加。
             </p>
             <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
               <Button asChild>
@@ -267,6 +274,103 @@ export default async function DashboardPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+function NextStepCard({
+  applicationsCount,
+  completionPercentage,
+  recentDeadlines,
+  recentTasks,
+}: {
+  applicationsCount: number;
+  completionPercentage: number;
+  recentDeadlines: Array<{
+    application: {
+      id: string;
+      programs?: {
+        name?: string | null;
+        schools?: { name?: string | null } | null;
+      } | null;
+    };
+    deadline: { deadline_date: string | null; id: string };
+  }>;
+  recentTasks: Array<{
+    application_id: string;
+    due_date: string | null;
+    id: string;
+    title: string;
+  }>;
+}) {
+  const profileIncomplete = completionPercentage < 100;
+  const noApplications = applicationsCount === 0;
+
+  return (
+    <section className="mt-8 rounded-lg border bg-card p-5">
+      <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-start">
+        <div>
+          <p className="text-sm font-semibold text-primary">下一步建议</p>
+          <h2 className="mt-2 text-xl font-semibold">
+            {profileIncomplete
+              ? "先完善学生背景档案"
+              : noApplications
+                ? "去项目库或选校推荐添加目标项目"
+                : recentTasks.length > 0
+                  ? "先处理最近的待办任务"
+                  : "检查近期 DDL 和申请状态"}
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
+            MyGrad 会根据你的背景、申请清单、待办任务和 DDL，优先提示最值得处理的下一步。
+          </p>
+        </div>
+        <div className="flex flex-col gap-3 sm:flex-row lg:flex-wrap lg:justify-end">
+          <Button asChild variant="outline">
+            <Link href="/profile/edit">完善背景</Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link href="/matching">查看选校推荐</Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link href="/applications">查看申请清单</Link>
+          </Button>
+          <Button asChild>
+            <Link href="/tasks">查看任务</Link>
+          </Button>
+        </div>
+      </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        <div className="rounded-md border bg-background p-4">
+          <h3 className="font-medium">最近 3 个待办任务</h3>
+          <div className="mt-3 grid gap-2 text-sm text-muted-foreground">
+            {recentTasks.length === 0 ? (
+              <p>暂无未完成任务。</p>
+            ) : (
+              recentTasks.map((task) => (
+                <Link className="transition-colors hover:text-foreground" href={`/applications/${task.application_id}`} key={task.id}>
+                  {task.title} · {task.due_date ?? "无截止日期"}
+                </Link>
+              ))
+            )}
+          </div>
+        </div>
+
+        <div className="rounded-md border bg-background p-4">
+          <h3 className="font-medium">最近 3 个 DDL</h3>
+          <div className="mt-3 grid gap-2 text-sm text-muted-foreground">
+            {recentDeadlines.length === 0 ? (
+              <p>暂无 DDL，请前往项目官网确认。</p>
+            ) : (
+              recentDeadlines.map(({ application, deadline }) => (
+                <Link className="transition-colors hover:text-foreground" href={`/applications/${application.id}`} key={deadline.id}>
+                  {deadline.deadline_date ?? "DDL 待核对"} · {application.programs?.schools?.name ?? "未知学校"} · {application.programs?.name ?? "未知项目"}
+                </Link>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 

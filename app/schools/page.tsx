@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ExternalLink, Search } from "lucide-react";
 
 import { FilterSelect } from "@/components/data/filter-select";
-import { SourceNotice } from "@/components/data/source-notice";
+import { DataDisclaimer } from "@/components/common/DataDisclaimer";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { getSchools } from "@/lib/schools/queries";
@@ -45,7 +45,7 @@ export default async function SchoolsPage({ searchParams }: SchoolsPageProps) {
         </div>
 
         <div className="mt-6">
-          <SourceNotice />
+          <DataDisclaimer />
         </div>
 
         <form className="mt-6 grid gap-4 rounded-lg border bg-card p-5 md:grid-cols-[1fr_180px_180px_auto] md:items-end">

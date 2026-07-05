@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { DeadlineList } from "@/components/calendar/DeadlineList";
+import { DataDisclaimer } from "@/components/common/DataDisclaimer";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { getUserApplicationDeadlines } from "@/lib/applications/queries";
@@ -40,6 +41,10 @@ export default async function CalendarPage() {
 
         <div className="mt-6 rounded-lg border bg-accent/40 p-4 text-sm leading-6 text-accent-foreground">
           DDL 数据来自项目库或 seed 示例，最终请以学校官网为准。
+        </div>
+
+        <div className="mt-6">
+          <DataDisclaimer />
         </div>
 
         <div className="mt-8">

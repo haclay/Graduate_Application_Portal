@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExternalLink } from "lucide-react";
 
-import { SourceNotice } from "@/components/data/source-notice";
+import { DataDisclaimer } from "@/components/common/DataDisclaimer";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { getProgramsBySchoolId, getSchoolBySlug } from "@/lib/schools/queries";
@@ -44,7 +44,7 @@ export default async function SchoolDetailPage({
         </div>
 
         <div className="mt-6">
-          <SourceNotice />
+          <DataDisclaimer />
         </div>
 
         <div className="mt-8 grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">

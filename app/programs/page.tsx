@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 
 import { FilterSelect } from "@/components/data/filter-select";
-import { SourceNotice } from "@/components/data/source-notice";
+import { DataDisclaimer } from "@/components/common/DataDisclaimer";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { getProgramFilterOptions, getPrograms } from "@/lib/programs/queries";
@@ -43,7 +43,7 @@ export default async function ProgramsPage({ searchParams }: ProgramsPageProps) 
         </div>
 
         <div className="mt-6">
-          <SourceNotice />
+          <DataDisclaimer />
         </div>
 
         <form className="mt-6 grid gap-4 rounded-lg border bg-card p-5 lg:grid-cols-[1fr_160px_190px_160px_auto] lg:items-end">

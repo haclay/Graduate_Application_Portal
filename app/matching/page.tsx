@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Sparkles } from "lucide-react";
 
+import { MatchingTierGuide } from "@/components/matching/MatchingTierGuide";
 import { ProfileSummary } from "@/components/matching/ProfileSummary";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
@@ -56,6 +57,7 @@ export default async function MatchingPage() {
         ) : (
           <div className="mt-8 grid gap-6">
             <ProfileSummary profile={profile} />
+            <MatchingTierGuide />
             <section className="rounded-lg border bg-card p-5">
               <h2 className="text-lg font-semibold">推荐规则说明</h2>
               <div className="mt-4 grid gap-3 text-sm leading-6 text-muted-foreground md:grid-cols-2">

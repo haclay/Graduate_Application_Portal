@@ -1,4 +1,7 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
+
+import { SiteFooter } from "@/components/site-footer";
+
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,7 +16,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
-      <body>{children}</body>
+      <body>
+        {children}
+        <SiteFooter />
+      </body>
     </html>
   );
 }

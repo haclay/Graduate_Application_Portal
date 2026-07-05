@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { DataDisclaimer } from "@/components/common/DataDisclaimer";
+import { MatchingTierGuide } from "@/components/matching/MatchingTierGuide";
 import { RecommendationGroup } from "@/components/matching/RecommendationGroup";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
@@ -91,6 +93,12 @@ export default async function MatchingResultsPage() {
             当前推荐基于 MVP 规则系统生成，仅供规划参考，不代表真实录取概率。
           </p>
         </div>
+
+        <div className="mt-6">
+          <DataDisclaimer />
+        </div>
+
+        <MatchingTierGuide />
 
         <div className="mt-6 rounded-lg border bg-accent/40 p-4 text-sm leading-6 text-accent-foreground">
           当前推荐基于 MVP 规则系统生成，仅供规划参考，不代表真实录取概率。

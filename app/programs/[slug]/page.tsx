@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { ExternalLink } from "lucide-react";
 
 import { AddToApplicationButton } from "@/components/applications/AddToApplicationButton";
-import { SourceNotice } from "@/components/data/source-notice";
+import { DataDisclaimer } from "@/components/common/DataDisclaimer";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { getProgramBySlug } from "@/lib/programs/queries";
@@ -58,7 +58,7 @@ export default async function ProgramDetailPage({
         </div>
 
         <div className="mt-6">
-          <SourceNotice />
+          <DataDisclaimer />
         </div>
 
         <div className="mt-8 grid gap-5 lg:grid-cols-[1fr_1fr]">
