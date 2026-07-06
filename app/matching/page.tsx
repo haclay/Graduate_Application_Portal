@@ -65,9 +65,14 @@ export default async function MatchingPage() {
                 <p>分档为彩票、冲刺、匹配、稳妥，仅代表 MVP 规则下的规划建议。</p>
                 <p>后续阶段可继续加入项目难度、历史案例和人工审核。</p>
               </div>
-              <Button asChild className="mt-6" size="lg">
-                <Link href="/matching/results">生成选校推荐</Link>
-              </Button>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <Button asChild size="lg">
+                  <Link href="/matching/results">生成规则版选校推荐</Link>
+                </Button>
+                <Button asChild size="lg" variant="outline">
+                  <Link href="/matching/ai">使用 AI 生成选校推荐</Link>
+                </Button>
+              </div>
             </section>
           </div>
         )}

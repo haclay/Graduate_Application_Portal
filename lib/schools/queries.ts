@@ -31,6 +31,7 @@ export async function getSchools(filters: SchoolFilters = {}): Promise<QueryResu
     const searchQuery = normalize(filters.query);
     const country = normalize(filters.country);
     const city = normalize(filters.city);
+    const schoolType = normalize(filters.schoolType);
 
     if (searchQuery) {
       query = query.or(
@@ -44,6 +45,10 @@ export async function getSchools(filters: SchoolFilters = {}): Promise<QueryResu
 
     if (city) {
       query = query.eq("city", city);
+    }
+
+    if (schoolType) {
+      query = query.eq("school_type", schoolType);
     }
 
     const { data, error } = await query.returns<School[]>();

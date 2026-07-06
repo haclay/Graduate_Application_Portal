@@ -100,13 +100,13 @@ export default async function HomePage() {
                 </Link>
               </Button>
               <Button asChild className="bg-background/85 backdrop-blur hover:bg-background" size="lg" variant="outline">
-                <Link href="/programs">查看学校项目库</Link>
+                <Link href="/schools">查看学校</Link>
               </Button>
             </div>
           </div>
         </div>
       </section>
-      <section className="border-t bg-muted/40">
+      <section className="bg-[#EAF3FF]">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
           <div className="max-w-2xl">
             <p className="text-sm font-semibold text-primary">为什么需要一个工作台</p>
@@ -114,7 +114,7 @@ export default async function HomePage() {
           </div>
           <div className="mt-8 grid gap-3 md:grid-cols-2">
             {painPoints.map((point) => (
-              <div className="flex gap-3 rounded-lg border bg-card p-4" key={point}>
+              <div className="flex gap-3 rounded-lg border border-white/70 bg-white/90 p-4 shadow-sm" key={point}>
                 <ListChecks className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden />
                 <p className="text-sm leading-6 text-muted-foreground">{point}</p>
               </div>
@@ -123,22 +123,24 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-        <div className="max-w-2xl">
-          <p className="text-sm font-semibold text-primary">申请流程</p>
-          <h2 className="mt-2 text-2xl font-semibold">申请流程 7 步</h2>
-        </div>
-        <div className="mt-8 grid gap-3 md:grid-cols-7">
-          {processSteps.map((step, index) => (
-            <article className="rounded-lg border bg-card p-4" key={step}>
-              <p className="text-sm font-semibold text-primary">{index + 1}</p>
-              <h3 className="mt-2 text-sm font-medium leading-6">{step}</h3>
-            </article>
-          ))}
+      <section className="bg-[#FFF4D6]">
+        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+          <div className="max-w-2xl">
+            <p className="text-sm font-semibold text-primary">申请流程</p>
+            <h2 className="mt-2 text-2xl font-semibold">申请流程 7 步</h2>
+          </div>
+          <div className="mt-8 grid gap-3 md:grid-cols-7">
+            {processSteps.map((step, index) => (
+              <article className="rounded-lg border border-white/70 bg-white/90 p-4 shadow-sm" key={step}>
+                <p className="text-sm font-semibold text-primary">{index + 1}</p>
+                <h3 className="mt-2 text-sm font-medium leading-6">{step}</h3>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
-      <section className="border-t bg-muted/40">
+      <section className="bg-[#F6FAFF]">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
           <div className="max-w-2xl">
             <p className="text-sm font-semibold text-primary">核心模块</p>
@@ -149,7 +151,7 @@ export default async function HomePage() {
               const Icon = feature.icon;
 
               return (
-                <article className="rounded-lg border bg-card p-5" key={feature.title}>
+                <article className="rounded-lg border border-white/70 bg-white/90 p-5 shadow-sm" key={feature.title}>
                   <Icon className="mb-4 h-5 w-5 text-primary" aria-hidden="true" />
                   <h3 className="text-base font-semibold">{feature.title}</h3>
                   <p className="mt-2 text-sm leading-6 text-muted-foreground">
@@ -159,7 +161,7 @@ export default async function HomePage() {
               );
             })}
           </div>
-          <div className="mt-8 rounded-lg border bg-card p-5">
+          <div className="mt-8 rounded-lg border border-white/70 bg-white/90 p-5 shadow-sm">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h3 className="font-semibold">下一步：把目标项目加入申请工作台</h3>

@@ -7,7 +7,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 
-export function LoginForm() {
+export function LoginForm({ redirectTo }: { redirectTo?: string }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -52,7 +52,8 @@ export function LoginForm() {
       return;
     }
 
-    router.replace(profile?.full_name?.trim() ? "/dashboard" : "/onboarding");
+    const safeRedirect = getSafeRedirect(redirectTo);
+    router.replace(profile?.full_name?.trim() ? safeRedirect ?? "/dashboard" : "/onboarding");
     router.refresh();
   }
 
@@ -110,4 +111,12 @@ export function LoginForm() {
       </Button>
     </form>
   );
+}
+
+function getSafeRedirect(redirectTo?: string) {
+  if (!redirectTo || !redirectTo.startsWith("/") || redirectTo.startsWith("//")) {
+    return null;
+  }
+
+  return redirectTo;
 }

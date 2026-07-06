@@ -10,7 +10,15 @@ import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
-export default async function LoginPage() {
+type LoginPageProps = {
+  searchParams: Promise<{
+    reason?: string;
+    redirect?: string;
+  }>;
+};
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const params = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -19,6 +27,8 @@ export default async function LoginPage() {
   if (user) {
     redirect("/dashboard");
   }
+
+  const needsSchoolDetailLogin = params.reason === "school-detail-required";
 
   return (
     <main className="min-h-screen">
@@ -31,12 +41,15 @@ export default async function LoginPage() {
             </span>
             <div>
               <h1 className="text-2xl font-semibold">登录 MyGrad</h1>
-              <p className="mt-1 text-sm text-muted-foreground">
-                登录后可以进入工作台并管理学生背景档案。
-              </p>
+              <p className="mt-1 text-sm text-muted-foreground">登录后可以进入工作台并管理学生背景档案。</p>
             </div>
           </div>
-          <LoginForm />
+          {needsSchoolDetailLogin ? (
+            <div className="mb-4 rounded-md border border-sky-200 bg-sky-50 px-3 py-3 text-sm text-sky-950">
+              请先登录后查看学校详情。
+            </div>
+          ) : null}
+          <LoginForm redirectTo={params.redirect} />
           <div className="mt-4">
             <Button asChild className="w-full" variant="ghost">
               <Link href="/">返回首页</Link>

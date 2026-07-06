@@ -24,6 +24,14 @@ export type School = {
   is_qs_top_500: boolean | null;
   is_active: boolean | null;
   aliases: string[] | null;
+  us_news_rank: string | null;
+  the_rank: string | null;
+  strong_subjects: string[] | null;
+  popular_programs: string[] | null;
+  school_type: string | null;
+  student_faculty_ratio: string | null;
+  international_student_ratio: string | null;
+  estimated_annual_cost: string | null;
   created_at: string | null;
   updated_at: string | null;
 };
@@ -32,6 +40,7 @@ export type SchoolFilters = {
   city?: string;
   country?: string;
   query?: string;
+  schoolType?: string;
 };
 
 export type QueryResult<T> = {

@@ -209,3 +209,42 @@ pnpm build
 - 第 11 阶段：测试、部署和上线
 
 下一阶段建议进入：第 6 阶段，文书、简历和推荐信管理。
+
+## 第 5.6A 阶段：AI 选校推荐
+
+This phase adds AI school-level matching. It does not crawl school websites, generate official program requirements, or modify the `schools` table. The AI reads the current user's `student_profiles` data and active QS school data, then groups schools into reach, match, and safe tiers.
+
+新增页面：
+
+- `/matching/ai`：查看背景摘要并生成 AI 选校推荐
+- `/matching/ai/results/[runId]`：查看某次 AI 推荐结果
+
+新增 API route：
+
+- `POST /api/ai/matching`：仅服务端调用 OpenAI API，生成并保存 AI 推荐结果
+
+新增数据库 migration：
+
+- `supabase/migrations/007_add_ai_recommendations.sql`
+- `supabase/migrations/008_extend_ai_recommendations_personalization.sql`
+
+新增数据表：
+
+- `ai_recommendation_runs`：保存每次 AI 推荐运行记录、用户背景快照、AI 用户画像、推荐策略、状态和错误信息
+- `ai_school_recommendations`：保存每次运行下的学校推荐结果、档位、推荐专业方向、理由、风险、下一步建议和推荐依据
+
+环境变量：
+
+```env
+OPENAI_API_KEY=
+OPENAI_MODEL=gpt-4o-mini
+```
+
+`OPENAI_API_KEY` 只能放在服务端 `.env.local` 中，不能以 `NEXT_PUBLIC` 开头，也不要提交到 GitHub。`OPENAI_MODEL` 可选；不配置时默认使用 `gpt-4o-mini`。
+
+AI 推荐限制：
+
+- Recommendation quantities are dynamic targets: reach target 5 schools (acceptable 4-6), match target 10 schools (acceptable 8-12), safe target 3 schools (acceptable 2-4).
+- AI 推荐仅供申请规划参考，不代表录取概率。
+- 最终申请要求、DDL、材料、语言要求和学费请以学校官网为准。
+- 第一阶段只做学校推荐，不抓取学校官网，不生成具体项目详情。
